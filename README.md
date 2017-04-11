@@ -1,7 +1,7 @@
 ## Shadow MVC Framework v0.1
 ![alt tag](https://thelogocompany.net/wp-content/uploads/2013/05/main_shadow.jpg)
 
-## Instalation
+## Installation
 Install using composer
 ```
 composer create-project zarna0x/shadow_framework myproject
