@@ -5,33 +5,26 @@
 * @Author Zarna0x
 */
 
-namespace Shadowapp\sys;
+namespace Shadowapp\Sys;
 
 use \PDO;
 
-class DbManager
+class Dbmanager
 {
     protected $_con;
-    private $_host;
-	private $_user;
-	private $_pass;
-	private $_dbName;
-	private $_toSelectVars;
-	private $_heap = array();
-	private $_stmt;
+	  private $_toSelectVars;
+	  private $_heap = array();
+	  private $_stmt;
 
 
 	public function __construct()
 	{
 		try
 		{
-
-			   $this->_host   = DB_HOST;
-		     $this->_user   = DB_USER;
-		     $this->_pass   = DB_PASS;
-		     $this->_dbName = DB_NAME;
-	     	
-          $this->_con    = new PDO("mysql:host=$this->_host;dbname=$this->_dbName",$this->_user,$this->_pass);
+         $config = new Config;
+         $data = $config->get(); 
+			 
+          $this->_con    = new PDO("mysql:host=$data->db_host;dbname=$data->db_name",$data->db_user,$data->db_pass);
           $this->_con->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);  
 		}
 		catch(PDOException $e)
