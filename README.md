@@ -1,5 +1,20 @@
-#Shadow MVC Framework v0.1
+## Shadow MVC Framework v0.1
 ![alt tag](https://thelogocompany.net/wp-content/uploads/2013/05/main_shadow.jpg)
+
+## Instalation
+Install using composer
+```
+composer create-project zarna0x/shadow_framework myproject
+```
+
+or you can clonse git repository
+```
+git clone https://github.com/Zarna0x/Shadow-mvc-framework.git
+```
+and 
+```
+composer install
+```
 
 ## Features
 ShadowPHP is simple and flexible mvc framework which provides various features just out of the box,
