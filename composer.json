@@ -1,0 +1,27 @@
+{
+    "name": "zarna0x/shadow_framework",
+    "description": "Shadow MVC Framework v0.1",
+    "authors": [
+        {
+            "name": "Zarna0x",
+            "email": "justnightmare123@gmail.com"
+        }
+    ],
+
+    "license": "MIT",
+
+    "require":{
+      "symfony/console": "^3.1"
+   },
+  
+   "require-dev": {
+      "phpunit/phpunit": "^5.7"
+   },
+   
+   "autoload": {
+     "psr-4": {
+        "Shadowapp\\Console\\Command\\": "shadowapp/sh_console/commands",
+        "Shadowapp\\" : "shadowapp/"
+     }
+   }
+}

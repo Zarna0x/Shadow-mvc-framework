@@ -1,0 +1,14 @@
+<?php
+ namespace Shadowapp\Controllers;
+
+ use Shadowapp\Sys\View as View;
+   
+  class __controllerName__
+  {
+  	public function __construct()
+ 	{
+           #code here
+ 	}
+
+  }
+?>
