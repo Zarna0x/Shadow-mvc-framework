@@ -66,7 +66,7 @@ GitShadow.php:
 ```
 ## Define Routes
 
-ShadowPHP has advanced routing capabilities and user can define custom routes(Located in sh_config/Routes.php).
+ShadowPHP has advanced routing capabilities and user can define custom routes(Located in sh_http/Routes.php).
 You can define route this way:
 ```
 use ShadowApp\Sys\Router as ShadowRouter;

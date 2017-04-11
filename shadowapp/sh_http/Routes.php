@@ -51,8 +51,8 @@ ShadowRouter::define('/cheki',[
 ]);
 
 ShadowRouter::define('/register',function(){
-	ShadowApp\Sys\View::run('register/index',[
-       "erti" => "this is var"
+	Shadowapp\Sys\View::run('register/index',[
+       "erti" => "this is ssvar"
 	]);
 });
 

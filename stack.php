@@ -28,6 +28,6 @@ include_once 'defines.php';
    // });
 
 
- setDir('shadowapp/sh_config/');
+ setDir('shadowapp/sh_http/');
 
 ?>
