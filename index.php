@@ -7,5 +7,5 @@ session_start();
 */
 
 include_once 'stack.php';
-var_dump('wtf');
+###
 ?>
