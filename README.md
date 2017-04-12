@@ -7,7 +7,7 @@ Install using composer
 composer create-project zarna0x/shadow_framework myproject
 ```
 
-or you can clonse git repository
+or you can clone git repository
 ```
 git clone https://github.com/Zarna0x/Shadow-mvc-framework.git
 ```
