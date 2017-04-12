@@ -1,5 +1,6 @@
 ## Shadow MVC Framework v0.1
 ![alt tag](https://thelogocompany.net/wp-content/uploads/2013/05/main_shadow.jpg)
+![Build Status](https://api.travis-ci.org/Zarna0x/Shadow-mvc-framework.svg?branch=master)
 
 ## Installation
 Install using composer
