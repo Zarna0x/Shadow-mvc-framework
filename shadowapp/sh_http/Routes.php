@@ -85,6 +85,13 @@ ShadowRouter::define('/modcss',[
    'controller' => 'kernel',
    'method'     => 'index'
 ]);
+ShadowRouter::define('/modx',function(){
+  echo 'wtf';
+});
+
+ShadowRouter::define('/abc',function(){
+  return;
+});
 
 /*
 * Run Routes

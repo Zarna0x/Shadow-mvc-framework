@@ -29,5 +29,4 @@ include_once 'defines.php';
 
 
  setDir('shadowapp/sh_http/');
-
 ?>

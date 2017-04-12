@@ -43,18 +43,18 @@ Class View
 	         //echo "<pre>",print_r($templateCompiler->assignedValues,1),"</pre>";
               if ($autoBootstrap) {
 
-	          include_once BASE_PATH.'/index.shadow';
+	          include_once $viewPath.'/index.shadow';
               include_once $templateCompiler->run();
-              include_once BASE_PATH.'/footer.shadow';   
+              include_once $viewPath.'/footer.shadow';   
 	                          
              } else {
                include_once $templateCompiler->run();
              }
 	     }else{
              if ($autoBootstrap) {
-                include_once BASE_PATH.'/index.shadow';
+                include_once $viewPath.'/index.shadow';
                 include_once $filePath;
-                include_once BASE_PATH.'/footer.shadow';   
+                include_once $viewPath.'/footer.shadow';   
 	         } else {
               include_once $filePath;
              }

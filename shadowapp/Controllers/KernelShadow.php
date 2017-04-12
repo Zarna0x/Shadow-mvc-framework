@@ -8,7 +8,7 @@
   {
   	public function indexMethod()
   	{
- 	    View::run('test/index',[],false);
+ 	    var_dump(1111111);
  	  }
 
   }
