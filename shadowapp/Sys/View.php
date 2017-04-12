@@ -14,10 +14,10 @@ Class View
 	* @Author Zarna0x
 	*/
 	public static function run($path,$params = null,$autoBootstrap = true)
-	{
-          
+	{   
+		$viewPath     = dirname(dirname(__FILE__)).'/sh_views';
        	$explodedPath = explode('/', $path);
-        $filePath     = file_exists(BASE_PATH."/".$explodedPath[0]."/".$explodedPath[1].".shadow")? BASE_PATH."/".$explodedPath[0]."/".$explodedPath[1].".shadow" : null; 
+        $filePath     = file_exists($viewPath."/".$explodedPath[0]."/".$explodedPath[1].".shadow")? $viewPath."/".$explodedPath[0]."/".$explodedPath[1].".shadow" : null; 
 	    
       
 	   if($filePath != null)

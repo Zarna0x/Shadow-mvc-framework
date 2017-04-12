@@ -6,11 +6,11 @@
  */
  namespace Shadowapp\Sys;
  
-
- class Router
+ Class Router
  {
   
- 	protected static $_uri     = [];
+ 	protected static $_data    = null;
+  protected static $_uri     = [];
  	protected static $_methods = [];
   protected static $_request = [];  
   protected static $_requestList = ['AJAX','GET','POST'];
@@ -19,8 +19,13 @@
     * Define routes and collect it to $_uri array
     * @param type $uri
     */
+ 
+
  	public static function define($uri,$method = null,$request_type = "get")
- 	{
+ 	{    
+
+       
+       self::$_data = new Config;
        self::$_uri[]   = trim($uri,'/');
        self::$_methods[trim($uri,'/')] = $method;
        self::$_request[trim($uri,'/')] = strtoupper($request_type);
@@ -114,15 +119,26 @@
          {
                    call_user_func(self::$_methods[$Value]);
 
-         }
-        } // Wrong Request method else
-         
- 			}
+          }
+      }
+   } else {
+        $viewsDir = dirname(dirname(__FILE__)).'/sh_views/';  
+       if (!isset(self::$_data->get()->page['not_found'])) {
+          echo "Wrong config.ini configuration. Cant find page[not_found] parameter";
+          die;
+       }
 
- 		}
+        $notFoundFile = $viewsDir.self::$_data->get()->page['not_found'].'.shadow';
+        if (!file_exists($notFoundFile)) {
+           die('Cant find requested file');
+        } 
 
- 	}
+        require_once $notFoundFile;
+   }
 
  }
+
+ }
+}
 
 ?>

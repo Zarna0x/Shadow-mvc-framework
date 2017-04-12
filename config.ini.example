@@ -7,3 +7,7 @@ db_host = 127.0.0.1
 db_user = root
 db_pass = secret
 db_name = shadowdb
+
+[ROUTE_INFO]
+;here you can set file which appears when router cant find requested page
+page[not_found] = errors/404

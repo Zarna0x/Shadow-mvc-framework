@@ -103,15 +103,16 @@ class TemplateCompiler
                  /*
                   * Set Rules 
                   */
-                 $this->template = $this->setRules($this->template);
+        $this->template = $this->setRules($this->template);
          //return;
+         $cacheDir = $viewPath     = dirname(dirname(__FILE__)).'/sh_cache';
 
          $cache_file_name = md5($this->filename).".php";
-         $cache_file = fopen(CACHE_DIR.'/'.$cache_file_name,'w+');
+         $cache_file = fopen($cacheDir.'/'.$cache_file_name,'w+');
   	     fwrite($cache_file,$this->template);
   	     fclose($cache_file);
 
-  	     return CACHE_DIR.'/'.$cache_file_name;
+  	     return $cacheDir.'/'.$cache_file_name;
   	} 
 
   	 }catch(Exception $e){
