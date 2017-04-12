@@ -1,4 +1,5 @@
 <?php
+
 /*
 * Shadowphp framework
 * @link https://github.com/Zarna0x/Shadow-mvc-framework
@@ -34,7 +35,8 @@ class Dbmanager
 	}
 
 
-	public function select($tableForSel,$toSelect = array(),$toGet = array()){
+
+	public function select_x($tableForSel,$toSelect = array(),$toGet = array()){
    # RETURNS OBJECT_ARRAY OF SELECTED DATA
     /*
      @param1(string) - NAME OF TABLE

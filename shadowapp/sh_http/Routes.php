@@ -93,6 +93,11 @@ ShadowRouter::define('/abc',function(){
   return;
 });
 
+ShadowRouter::define('/dbtest',[
+   'controller' => 'model',
+   'method'     => 'dbtest'
+]);
+
 /*
 * Run Routes
 */

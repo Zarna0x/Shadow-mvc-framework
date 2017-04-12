@@ -40,7 +40,7 @@ class CreateController extends Command
 
 	private function checkIfControllerExists($controllerName,OutputInterface $o) 
 	{
-		$controller     = getcwd().'/shadowapp/sh_controllers/'.$controllerName;
+		$controller     = getcwd().'/shadowapp/Controllers/'.$controllerName;
         
         if(file_exists($controller)){
         	$o->writeln(" \033[41m Controller Allready Exists ! \033[0m \n");
@@ -59,7 +59,7 @@ class CreateController extends Command
      */
 	public function createController($controllerName,OutputInterface $out)
 	{
-        $controllerPath = getcwd().'/shadowapp/sh_controllers/'.$controllerName;
+        $controllerPath = getcwd().'/shadowapp/Controllers/'.$controllerName;
         
         $file = fopen($controllerPath, "w+");
         
