@@ -3,7 +3,7 @@
 
 * [![Build Status](https://api.travis-ci.org/Zarna0x/Shadow-mvc-framework.svg?branch=master)](https://travis-ci.org/Zarna0x/Shadow-mvc-framework)
 
-[![license](https://img.shields.io/github/license/Zarna0x/Shadow-mvc-framework.svg?style=flat-square)]()
+* [![license](https://img.shields.io/github/license/Zarna0x/Shadow-mvc-framework.svg?style=flat-square)]()
 
 ## Installation
 Install using composer
