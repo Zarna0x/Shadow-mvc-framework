@@ -3,6 +3,7 @@
 namespace Shadowapp\Sys\Db\Query;
 
 use Shadowapp\Sys\Config as Config;
+use Shadowapp\Sys\Db\Connection;
 use \PDO;
 
 class Builder  implements \Shadowapp\Sys\Db\QueryBuilderInterface
@@ -13,7 +14,15 @@ class Builder  implements \Shadowapp\Sys\Db\QueryBuilderInterface
      * @var PDO object
      */
    protected $_con;
-   
+
+  
+   /**
+     * count rows
+     *
+     * @var int
+     */
+   public $rowCount;
+    
     /**
      * Collect select data for query
      *
@@ -38,6 +47,13 @@ class Builder  implements \Shadowapp\Sys\Db\QueryBuilderInterface
    protected $_where = [];
 
    /**
+     * Create new PDO stmt
+     *
+     * @var PDOStatement
+     */
+   protected $_stmt = '';
+
+   /**
      * Constructor function.
      *
      * @param  none
@@ -46,19 +62,7 @@ class Builder  implements \Shadowapp\Sys\Db\QueryBuilderInterface
 	
    public function __construct()
    {
-    try
-		{
-         $config = new Config;
-         $data = $config->get(); 
-			 
-          $this->_con    = new PDO("mysql:host=$data->db_host;dbname=$data->db_name",$data->db_user,$data->db_pass);
-          $this->_con->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);  
-		}
-		catch(PDOException $e)
-		{
-          echo $e->getMessage();
-		}
-     
+      $this->_con = Connection::get();  
    }
 
    /**
@@ -121,8 +125,31 @@ class Builder  implements \Shadowapp\Sys\Db\QueryBuilderInterface
    
    public function get()
    {
-   	  
-   }
+     
+     // var_dump($this->_selectStack);
+     // var_dump($this->_where);
+     // var_dump($this->_from);
+
+     //get keys and values of where clause
+     foreach ($this->_where as $key => $val) {
+        $whereKeyCollection[] = $key;
+        $whereValCollection[] = $val;
+     }
+
+
+     $whereInput = implode("= ? AND ",$whereKeyCollection)."= ?"; 
+     $actualSelect = implode(',', $this->_selectStack);
+     
+     $SQL = "SELECT $actualSelect FROM $this->_from WHERE $whereInput"; 
+     $this->_stmt = $this->_con->prepare($SQL);
+     $this->_stmt->execute($whereValCollection);
+     
+     $this->rowCount = $this->_stmt->rowCount();
+    if ($this->rowCount > 0) {
+       return $this->_stmt->fetchAll(PDO::FETCH_OBJ);
+     } 
+       return false;    	  
+    }
 
    protected function clean($str){
        return htmlentities(addslashes(strip_tags(trim($str))));

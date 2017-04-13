@@ -20,4 +20,13 @@ interface QueryBuilderInterface
      */
 	public function from($fromData);
 
+     /**
+     * get query result
+     *
+     * @param  none
+     * @return \PDO object
+     */
+     public function get();
+
+
 }

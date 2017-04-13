@@ -10,8 +10,9 @@
   	protected $db;
 
   	public function __construct()
- 	{
+  	{
        $this->db = new db;
+
    	}
 
  	public function dbtestMethod()
@@ -25,15 +26,16 @@
        
        //opt 1
        $builder = $this->db
-                       ->where([
-                           'id' => 4,
-                           'name' => 'cheki'
-                       	 ])->where('pass','ako123');
-
-
-        var_dump($builder);
+                        ->select('id,name,password')
+                        ->from('users')
+                        ->where([
+                           'id' => 1,
+                           'name' => 'zarna'
+                        ])->where('password','pass')->get();
+                        
        
-
+   var_dump($builder);
+   var_dump($this->db->rowCount);
        //opt 2
        
  	}
