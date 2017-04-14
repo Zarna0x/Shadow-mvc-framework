@@ -25,13 +25,11 @@
  		//     ->get();
        
        //opt 1
-       $builder = $this->db
-                        ->from('sxva')
-                        ->where('id',1)
-                        ->get('uses');
-                   
-   
-   
+        $builder = $this->db->select('name,password')
+                 ->where('name','zarna')
+                 ->andWhere('id','<',"2")
+                 ->get('users');         
+    
    var_dump($builder);
    var_dump($this->db->rowCount);
        //opt 2

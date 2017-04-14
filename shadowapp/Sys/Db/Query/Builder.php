@@ -54,6 +54,19 @@ class Builder  implements \Shadowapp\Sys\Db\QueryBuilderInterface
    protected $_stmt = '';
 
    /**
+     * Save raw where statements
+     *
+     * @var String
+     */
+   protected $_rawWhereData = [];
+   
+
+   protected $_addWhereArr = [];
+
+   protected $_allowedOpperators = [
+    '>','<','>=','<=','!=','<>','!<','!>'
+   ];   
+   /**
      * Constructor function.
      *
      * @param  none
@@ -98,7 +111,7 @@ class Builder  implements \Shadowapp\Sys\Db\QueryBuilderInterface
    
 
    /**
-     * from part of query builder.
+     * where part of query builder.
      * 
      * @param  string $fromtData
      * @return \Shadowapp\Sys\Db\Query\Builder
@@ -122,20 +135,32 @@ class Builder  implements \Shadowapp\Sys\Db\QueryBuilderInterface
    	   return $this;
    }
 
+   public function andWhere($col, $oper,$val)
+   {
+      $this->_rawWhereData[] = strip_tags(trim(implode(" ",[$col,$oper,'?'])));
+      $this->_addWhereArr[] =  $this->clean($val);
+
+      return $this;
+   }
+
    
-   public function get($table = '')
+   public function get($table = null)
    {
      if (!count($this->_selectStack)) {
         $this->_selectStack = ['*'];
      }
 
-     if(!empty('table')){
+     if(!empty($table)){
         $this->_from = $table;
      }   
-    
+     
+   
      $actualSelect = implode(',', $this->_selectStack);
      $SQL = "SELECT $actualSelect FROM $this->_from";
+     
 
+      $whereValCollection = [];
+     
      if (count($this->_where)) {
         foreach ($this->_where as $key => $val) {
           $whereKeyCollection[] = $key;
@@ -146,11 +171,28 @@ class Builder  implements \Shadowapp\Sys\Db\QueryBuilderInterface
        $whereInput = implode("= ? AND ",$whereKeyCollection)."= ?"; 
        $SQL .= " WHERE $whereInput";
      } 
-     
-    
+       
+       // build addition andWhere statement     
+       $sqlStr = '';
+     if (!empty($this->_rawWhereData)) {
+       foreach ($this->_rawWhereData as $whereSTMT) {
+         $sqlStr .= " AND ".$whereSTMT;
+       }
+       
+      // strip first AND if prevous WHERE does not exists
+       if (!count($this->_where)){
+          $sqlStr = " WHERE ".$this->getAfterString($sqlStr);
+       }
+       
+       // bind to original query string
+       $SQL .= " ".$sqlStr;
+  
+        $whereValCollection = array_merge($whereValCollection,$this->_addWhereArr);     
+     }
+          
      $this->_stmt = $this->_con->prepare($SQL);
      try{
-       $this->_stmt->execute(isset($whereValCollection)? $whereValCollection : null);
+       $this->_stmt->execute(count($whereValCollection)? $whereValCollection : null);
      }catch(\PDOException $e){
         throw new \Shadowapp\Sys\Exceptions\Db\WrongQueryException($e->getMessage());
      }
@@ -161,7 +203,13 @@ class Builder  implements \Shadowapp\Sys\Db\QueryBuilderInterface
      } 
        return false;    	  
     }
+   
 
+   protected function getAfterString($sqlStr,$find = 'AND')
+   {
+      $offset = strpos($sqlStr, $find)+strlen($find);
+      return trim(substr($sqlStr,$offset));
+   }
    protected function clean($str){
        return htmlentities(addslashes(strip_tags(trim($str))));
    }
