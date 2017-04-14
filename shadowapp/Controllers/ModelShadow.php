@@ -4,7 +4,7 @@
  
  use Shadowapp\Sys\View as View;
  use Shadowapp\Sys\Db\Query\Builder as db;
-   
+    
   class ModelShadow
   {
   	protected $db;
@@ -26,14 +26,12 @@
        
        //opt 1
        $builder = $this->db
-                        ->select('id,name,password')
-                        ->from('users')
-                        ->where([
-                           'id' => 1,
-                           'name' => 'zarna'
-                        ])->where('password','pass')->get();
-                        
-       
+                        ->from('sxva')
+                        ->where('id',1)
+                        ->get('uses');
+                   
+   
+   
    var_dump($builder);
    var_dump($this->db->rowCount);
        //opt 2

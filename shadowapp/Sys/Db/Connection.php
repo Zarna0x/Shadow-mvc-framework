@@ -35,9 +35,9 @@ Class Connection
 	        
           return self::$connection;
 		}
-		catch(PDOException $e)
+		catch(\PDOException $e)
 		{
-          echo $e->getMessage();
+        throw new \Shadowapp\Sys\Exceptions\Db\CantConnectException($e->getMessage());
 		}
 	}
 

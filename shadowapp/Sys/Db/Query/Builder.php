@@ -123,26 +123,37 @@ class Builder  implements \Shadowapp\Sys\Db\QueryBuilderInterface
    }
 
    
-   public function get()
+   public function get($table = '')
    {
-     
-     // var_dump($this->_selectStack);
-     // var_dump($this->_where);
-     // var_dump($this->_from);
-
-     //get keys and values of where clause
-     foreach ($this->_where as $key => $val) {
-        $whereKeyCollection[] = $key;
-        $whereValCollection[] = $val;
+     if (!count($this->_selectStack)) {
+        $this->_selectStack = ['*'];
      }
 
-
-     $whereInput = implode("= ? AND ",$whereKeyCollection)."= ?"; 
+     if(!empty('table')){
+        $this->_from = $table;
+     }   
+    
      $actualSelect = implode(',', $this->_selectStack);
+     $SQL = "SELECT $actualSelect FROM $this->_from";
+
+     if (count($this->_where)) {
+        foreach ($this->_where as $key => $val) {
+          $whereKeyCollection[] = $key;
+          $whereValCollection[] = $val;
+        }
+
+
+       $whereInput = implode("= ? AND ",$whereKeyCollection)."= ?"; 
+       $SQL .= " WHERE $whereInput";
+     } 
      
-     $SQL = "SELECT $actualSelect FROM $this->_from WHERE $whereInput"; 
+    
      $this->_stmt = $this->_con->prepare($SQL);
-     $this->_stmt->execute($whereValCollection);
+     try{
+       $this->_stmt->execute(isset($whereValCollection)? $whereValCollection : null);
+     }catch(\PDOException $e){
+        throw new \Shadowapp\Sys\Exceptions\Db\WrongQueryException($e->getMessage());
+     }
      
      $this->rowCount = $this->_stmt->rowCount();
     if ($this->rowCount > 0) {
