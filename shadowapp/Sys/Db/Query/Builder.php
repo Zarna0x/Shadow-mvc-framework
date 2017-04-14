@@ -137,6 +137,9 @@ class Builder  implements \Shadowapp\Sys\Db\QueryBuilderInterface
 
    public function andWhere($col, $oper,$val)
    {
+      if(!in_array($oper, $this->_allowedOpperators)){
+          $oper = '=';
+      }
       $this->_rawWhereData[] = strip_tags(trim(implode(" ",[$col,$oper,'?'])));
       $this->_addWhereArr[] =  $this->clean($val);
 
@@ -189,7 +192,7 @@ class Builder  implements \Shadowapp\Sys\Db\QueryBuilderInterface
   
         $whereValCollection = array_merge($whereValCollection,$this->_addWhereArr);     
      }
-          
+  echo $SQL;          
      $this->_stmt = $this->_con->prepare($SQL);
      try{
        $this->_stmt->execute(count($whereValCollection)? $whereValCollection : null);
