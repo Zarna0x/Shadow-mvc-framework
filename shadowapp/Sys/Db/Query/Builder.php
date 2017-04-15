@@ -14,8 +14,11 @@ class Builder  implements \Shadowapp\Sys\Db\QueryBuilderInterface
      * @var PDO object
      */
    protected $_con;
+    
 
-  
+   protected $_limitStr;
+   protected $_orderByStr;
+
    /**
      * count rows
      *
@@ -113,7 +116,8 @@ class Builder  implements \Shadowapp\Sys\Db\QueryBuilderInterface
    /**
      * where part of query builder.
      * 
-     * @param  string $fromtData
+     * @param  $whereData array|string
+     * @param  $optionalData string
      * @return \Shadowapp\Sys\Db\Query\Builder
      */
    public function where($whereData,$optionalData = null)
@@ -135,6 +139,12 @@ class Builder  implements \Shadowapp\Sys\Db\QueryBuilderInterface
    	   return $this;
    }
 
+   /**
+     * additional andWhere part of query builder.
+     * 
+     * @return \Shadowapp\Sys\Db\Query\Builder
+     */
+
    public function andWhere($col, $oper,$val)
    {
       if(!in_array($oper, $this->_allowedOpperators)){
@@ -146,6 +156,27 @@ class Builder  implements \Shadowapp\Sys\Db\QueryBuilderInterface
       return $this;
    }
 
+   /**
+     * where part of query builder.
+     * 
+     * @param  string $fromtData
+     * @return \Shadowapp\Sys\Db\Query\Builder
+     */
+    public function limit($limit,$offset = null)
+    {
+       $this->_limitStr = " LIMIT ".intval($limit);
+       if (!is_null($offset)) {
+         $this->_limitStr .= ', '.intval($offset);
+       }
+
+       return $this;
+    }
+
+    public function orderBy($val, $sort = 'ASC')
+    {
+       $this->_orderByStr = ' ORDER BY '.$val.' '.$sort;
+       return $this;
+    }
    
    public function get($table = null)
    {
@@ -192,7 +223,17 @@ class Builder  implements \Shadowapp\Sys\Db\QueryBuilderInterface
   
         $whereValCollection = array_merge($whereValCollection,$this->_addWhereArr);     
      }
-           
+      
+      if (!empty($this->_orderByStr)) {
+        $SQL .= $this->_orderByStr;       
+      }    
+
+
+     if (!empty($this->_limitStr)) {
+        $SQL .= $this->_limitStr;
+     }
+      
+
      $this->_stmt = $this->_con->prepare($SQL);
      try{
        $this->_stmt->execute(count($whereValCollection)? $whereValCollection : null);
