@@ -262,4 +262,5 @@ class Builder  implements \Shadowapp\Sys\Db\QueryBuilderInterface
    {
    	  return $this->_selectStack;
    }
+
 }

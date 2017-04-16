@@ -4,7 +4,7 @@ namespace Shadowapp\Controllers;
 
 use Shadowapp\Sys\View as View;
 use Shadowapp\Sys\Db\Query\Builder as db;
-
+use Shadowapp\Models\PagesShadow as Pages;
     
 
 class ModelShadow
@@ -21,7 +21,7 @@ class ModelShadow
  	public function dbtestMethod()
  	{
     
-  //opt 1
+  //Query Builder
   $builder = $this->db
                   ->select('id,name')
                   ->from('users')
@@ -30,9 +30,14 @@ class ModelShadow
                   ->andWhere('id', '>',4) 
                   ->get();      
     
-  var_dump($builder);
-  var_dump($this->db->rowCount);
-
+   
+   //ORM
+   $pages = new Pages;
+   $pages->home = 'homex';
+   $pages->save();      
+   
+   #var_dump($pages);
+  //  $pages->getSchema();
   }
 }
 

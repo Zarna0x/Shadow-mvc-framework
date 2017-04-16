@@ -47,8 +47,6 @@ class CreateController extends Command
         	exit(1);
         }
         
-       
-
 	}
      
 
