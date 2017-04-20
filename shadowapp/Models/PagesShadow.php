@@ -3,12 +3,18 @@ namespace Shadowapp\Models;
    
 class PagesShadow extends \Shadowapp\Sys\Db\Model
 {
-   public function __construct()
+   public static function InsertSomeRecord ()
    {
-     parent::__construct();
+   	  // $this->home = 'aa'; 
+   	  // $this->sasd = '123';
+   	  // $this->contact = 'Kaia';
+   	  // var_dump($this->save());
+   }  
+
+   public function getSomeData()
+   {
+   	 
    }
-
-
 }
 
 

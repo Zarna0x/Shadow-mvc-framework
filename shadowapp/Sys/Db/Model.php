@@ -8,7 +8,7 @@ use Shadowapp\Sys\Db\Query\Builder as db;
 class Model
 {
    protected $db;
-   private $table = '';
+   private   $table = '';
    protected $con;
    protected $_tableCollection = [];
   
@@ -16,8 +16,7 @@ class Model
    {
       $this->db = new db;
       $this->table = $this->getTable();
-
-   } 
+    } 
 
    public function __set($tableName,$val)
    {
@@ -76,4 +75,25 @@ class Model
    	$tableName = strtolower(substr($fullClassName->getShortName(),0,$offset));
    	return $tableName;
    }
+   
+   /*
+    * find result using primary key or specify pamereters using array,
+    * if table doesnot contains primary key result will be fetchecd by ID
+    */
+   public function find($primaryKeyOrArray)
+   {
+      if (is_array($primaryKeyOrArray)) {
+        return  $this->db->where($primaryKeyOrArray)->get($this->table);
+       }
+       //Or Find result By Primary Key
+       
+       $primaryKey = ($this->db->getPrimaryKey($this->table) != false)? $this->db->getPrimaryKey($this->table) : 'id';     
+       
+       return $this->db->where($primaryKey,$primaryKeyOrArray)->get($this->table);
+   }
+
+   public function findFirst()
+   {
+    
+   }  
 } 

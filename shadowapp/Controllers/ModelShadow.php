@@ -11,11 +11,11 @@ class ModelShadow
 {
   
   protected $db;
-
+  protected $pages;
   public function __construct()
   {
       $this->db = new db;
-
+      $this->pages = new Pages;
   }
 
  	public function dbtestMethod()
@@ -31,15 +31,15 @@ class ModelShadow
                   ->get();      
     
    
+
    //ORM
-   $pages = new Pages;
-   $pages->home = 'homex';
-   $pages->save();      
-   
-   #var_dump($pages);
-  //  $pages->getSchema();
+  
+   #1
+   $this->pages->find([
+     'id' => 36
+   ]);
+   #2
+   $x = $this->pages->find(36);
+   var_dump($x);
   }
 }
-
-
-?>
