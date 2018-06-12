@@ -13,5 +13,6 @@ include_once 'stack.php';
 ##########################
 
 $table = new Shadowapp\Sys\Db\Json\Table;
-$table->getQueryString('users');
+parr($table->getQueryString('articles'));
+var_dump($table->execute('articles'));
 ?>

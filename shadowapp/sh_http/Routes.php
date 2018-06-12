@@ -28,9 +28,7 @@ ShadowRouter::define('/contact',function(){
 
 
 ShadowRouter::define('/',function () {
-   Shadowapp\Sys\View::run('home/index',[
-       'cvladi' => 'rame mnishvneloba'
-    ],false);
+
 });
 
 ShadowRouter::define('/test111',function () {

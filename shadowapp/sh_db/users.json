@@ -2,11 +2,16 @@
 	"id" : {
 		"type": "int",
 		"length" : "11",
-		"primary_key": "true",
 		"null": "false",
 		"auto_increment": "true"
 	},
 	"name": {
+        "length": "255",
+        "type": "varchar",
+        "null": "false",
+        "default": "shadowww"
+	},
+	"sxva": {
         "length": "255",
         "type": "varchar",
         "null": "false",

@@ -2,9 +2,8 @@
 
 namespace Shadowapp\Sys\Db\Json;
 
-use Shadowapp\Sys\Config as Config;
 use Shadowapp\Sys\Db\Connection;
-use \PDO;
+
 
 class Table
 {
@@ -14,6 +13,8 @@ class Table
 	protected $_jsonContentList = [];
 	protected $_notAllowed = ['.','..'];
 	protected $_createQueries = [];
+    protected $_otherValues = [];
+    
 
 	public function __construct($jsonFile = JSON_DIR)
 	{
@@ -30,17 +31,20 @@ class Table
                 $fileName = $splData->getBasename('.json');
                 $this->_jsonContentList[$fileName] = json_decode(file_get_contents($jsonFile.DS.$value));
         });
-        
+          
         foreach ($this->_jsonContentList as $jKey => $jValue) {
              $this->_createQueries[$jKey] = $this->_renderTable($jKey,$jValue);
              
+             
 		 }
+
+		 
 
 	}
 	public function execute($tableStr)
 	{
 		 if (array_key_exists($tableStr, $this->_createQueries)) {
-             $this->_executeQuery($this->_createQueries[$tableStr]);
+            return $this->_executeQuery($this->_createQueries[$tableStr]);
 		 }
 	}
 
@@ -48,7 +52,7 @@ class Table
 	{
        $pQuery = $this->_db->prepare($queryStr);
        try{
-          var_dump($pQuery->execute());
+          return $pQuery->execute();
        }catch(\PDOException $e){
           throw new \Shadowapp\Sys\Exceptions\Db\WrongQueryException($e->getMessage());
        }	
@@ -58,17 +62,68 @@ class Table
 	{
         $query = 'CREATE TABLE IF NOT EXISTS `'.$tableName.'` (';
         $qStack = [];
+        $syscfg = '';
 
+        $pkStr = '';
         foreach ($tableData as $column => $attrs) {
+            if ($column == 'indexes') {
+
+               $syscfg = $this->_renderCfgData($attrs);
+               continue;
+            }
+
+            
+            if (shcol('primary_key',$attrs) === true) {
+           
+               $pkStr = "PRIMARY KEY (".$column.")";
+	        }
             
             $qStack[] = ' `'.$column.'` '.$this->_generateQueryAttrs($attrs);
             
         }
 
        $realTableQuery = implode(',', $qStack);
-       $realQuery = $query.$realTableQuery.');';
-       return $realQuery;
        
+       if (!empty($pkStr)) {
+          $realTableQuery .= ', '.$pkStr;
+       }
+       $realQuery = $query.$realTableQuery.')';
+       if (!empty($syscfg)){
+          $realQuery .= ' '.$syscfg.' ;';
+       }else {
+       	  $realQuery .= ' ;';
+       }
+        return $realQuery;
+       
+	}
+
+	protected function _renderCfgData($cfgData)
+	{
+        $this->_otherValues = array_change_key_case(array_merge($this->_otherValues,(array)$cfgData),CASE_UPPER);
+        
+        $engineStr = '';
+        if (!empty(shcol('ENGINE',$this->_otherValues))) {
+            $engineStr = "ENGINE = ".shcol('ENGINE',$this->_otherValues);
+
+        }
+
+         $diffStr = '';
+        foreach (array_reverse($this->_otherValues) as $fula => $sfx) {
+              if ($fula == 'ENGINE') {
+                   continue;
+              }
+
+             $diffStr .= $fula.'='.$sfx.' ';
+        }
+        
+         $realStr = '';
+        if (!empty($diffStr)){
+           $realStr = trim($engineStr).' DEFAULT '.trim($diffStr);   
+        }
+
+       return $realStr;
+
+
 	}
 
 	protected function _generateQueryAttrs($attributes)
@@ -78,10 +133,20 @@ class Table
 	   if (!empty($queryStack['type'])) {
 	     $queryStack['length'] = (!empty(shcol('length',$attributes))) ? '('.shcol('length',$attributes).')' : '';
 	   }
+	   
+       if (!empty(shcol('auto_increment',$attributes))) {
+             $queryStack['auto_increment'] = 'AUTO_INCREMENT';
+             $this->_otherValues['auto_increment'] = shcol('auto_increment',$attributes);
+       }
 	   $queryStack['null'] = (shcol('null',$attributes) == 'true') ? 'DEFAULT NULL' : 'NOT NULL' ;
 	   if ($queryStack['null'] != 'DEFAULT NULL') {
            $queryStack['default'] = (!empty(shcol('default',$attributes))) ? 'DEFAULT "'.shcol('default',$attributes).'"' : '';
 	   }
+       
+	   
+	   // parr($this->_otherValues);
+
+	   // die;
        $implodedQuery = trim(implode(' ', $queryStack));
        return $implodedQuery;
 	   
