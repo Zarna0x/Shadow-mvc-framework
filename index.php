@@ -1,4 +1,7 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 session_start();
 /*
 * Shadowphp framework
@@ -8,4 +11,7 @@ session_start();
 
 include_once 'stack.php';
 ##########################
+
+$table = new Shadowapp\Sys\Db\Json\Table;
+$table->getQueryString('users');
 ?>
