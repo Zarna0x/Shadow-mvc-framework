@@ -97,6 +97,14 @@ ShadowRouter::define('/dbtest',[
    'method'     => 'dbtest'
 ]);
 
+
+//api endpoints 
+
+ShadowRouter::define('articles',[
+  'controller' => 'api',
+   'method' => 'getArticles'
+]);
+
 /*
 * Run Routes
 */

@@ -43,4 +43,9 @@ function shcol($Key,$Collection,$Default = '')
 
    return $Data;
 }
+
+function response ()
+{
+  return new Shadowapp\Sys\Http\Response;
+}
 ?>
