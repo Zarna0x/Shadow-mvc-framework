@@ -43,26 +43,33 @@ class Router
 		/*
 		 * Custom route To Load
 		 */
-		$uriController = $uriArr[0];
+		$uriCustom = $uriArr[0];
 
 		/*
 		 * Method To Load
 		 */
 		$uriMethod = isset( $uriArr[1] ) ? $uriArr[1] : null;
 
+
 		foreach ( self::$_uri as $Key => $Value )
 		{
+
 			$routedUri = trim( substr( $uri, 0, strlen( $Value ) ) );
 
 			if ( empty( $routedUri ) && !empty( $uri ) )
 			{
+				
 				$routedUri = md5( rand( 0, 999999999999 ) );
 			}
+
+
 
 			if ( $Value == $routedUri )
 			{
 
+
 				$requestType = isset( self::$_request[$Value] ) ? self::$_request[$Value] : null;
+
 
 				if ( !in_array( $requestType, self::$_requestList ) )
 				{
@@ -79,10 +86,10 @@ class Router
 
 					if ( is_array( self::$_methods[$Value] ) )
 					{
+
 						$controllerName = "Shadowapp\\Controllers\\" . ucfirst( self::$_methods[$Value]['controller'] ) . "Shadow";
 
-						$methodName = isset( self::$_methods[$Value]['method'] ) ? self::$_methods[$Value]['method'] . "Method" : null;
-
+						$methodName = isset( self::$_methods[$Value]['method'] ) ? self::$_methods[$Value]['method'] : null;
 
 
 						/*
@@ -90,6 +97,7 @@ class Router
 						 */
 						if ( class_exists( $controllerName ) == false )
 						{
+
 							echo $controllerName . " doesn't exists";
 							return;
 						}
@@ -97,18 +105,22 @@ class Router
 						/*
 						 * Check if Method Exists
 						 */
+
 						if ( isset( self::$_methods[$Value]['method'] ) )
 						{
 
 							if ( method_exists( $controllerName, $methodName ) )
 							{
+
 								$paramString = trim( substr( $uri, strlen( $routedUri ) ), '/' );
 								$paramArray = explode( '/', $paramString );
 								$paramCount = (empty( $paramString )) ? 0 : count( $paramArray );
 
 
 								$reflectionMethod = new \ReflectionMethod( $controllerName, $methodName );
+							
 								$optArgCount = 0;
+
 								foreach ( $reflectionMethod->getParameters() as $param )
 								{
 
@@ -126,11 +138,18 @@ class Router
 									die;
 								}
 
-								//parr($reflectionMethod->getParameters());
-								$obj = new $controllerName;
-								call_user_func_array( [
+								
+					 			$obj = new $controllerName; 
+                                
+                                if (empty( $paramCount )) {
+                                  $reflectionMethod->invoke( $obj ); 
+                                } else {
+                                	call_user_func_array( [
 										$obj, $methodName
 												], $paramArray );
+                                }
+
+								
 							}
 							else
 							{

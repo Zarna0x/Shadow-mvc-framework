@@ -27,9 +27,10 @@ ShadowRouter::define('/contact',function(){
 */
 
 
-ShadowRouter::define('/',function () {
-
-});
+ShadowRouter::define('/',[
+  'controller' => 'contact',
+   'method' => 'printx'
+]);
 
 ShadowRouter::define('/test111',function () {
    echo 'wtff OKKKKKKKKkk KAi';
@@ -88,7 +89,7 @@ ShadowRouter::define('/modx',function(){
 });
 
 ShadowRouter::define('/abc',function(){
-  return;
+
 });
 
 ShadowRouter::define('/dbtest',[

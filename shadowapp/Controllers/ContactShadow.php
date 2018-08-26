@@ -2,17 +2,15 @@
 
 namespace Shadowapp\Controllers;
 
- class ContactShadow
- {
- 	public function __construct()
- 	{
- 		echo 'COntact SHADOW CONTROLLER<br>';
- 	}
+ 
+class ContactShadow
+{
 
- 	public function sayMethod()
- 	{
- 		echo 'THis is a say method<br>';
- 	}
- }
+	public function printx () 
+	{
+        echo 'ok';
+	}
+
+}
 
 ?>

@@ -7,13 +7,35 @@ use Shadowapp\Sys\Db\Connection;
 
 class Table
 {
+ /*
+  * @var string 
+  */
 	protected $_db;
+
+  /*
+  * @var string 
+  */
 	protected $_dir;
+  /*
+  * @var array 
+  */
 	protected $_tableList = [];
+  /*
+  * @var array 
+  */
 	protected $_jsonContentList = [];
+  /*
+  * @var array 
+  */
 	protected $_notAllowed = ['.','..'];
-	protected $_createQueries = [];
-    protected $_otherValues = [];
+	/*
+  * @var array 
+  */
+  protected $_createQueries = [];
+  /*
+  * @var array 
+  */
+  protected $_otherValues = [];
     
 
 	public function __construct($jsonFile = JSON_DIR)
@@ -41,6 +63,8 @@ class Table
 		 
 
 	}
+
+
 	public function execute($tableStr)
 	{
 		 if (array_key_exists($tableStr, $this->_createQueries)) {
@@ -65,6 +89,7 @@ class Table
         $syscfg = '';
 
         $pkStr = '';
+
         foreach ($tableData as $column => $attrs) {
             if ($column == 'indexes') {
 
@@ -143,10 +168,6 @@ class Table
            $queryStack['default'] = (!empty(shcol('default',$attributes))) ? 'DEFAULT "'.shcol('default',$attributes).'"' : '';
 	   }
        
-	   
-	   // parr($this->_otherValues);
-
-	   // die;
        $implodedQuery = trim(implode(' ', $queryStack));
        return $implodedQuery;
 	   
@@ -154,7 +175,7 @@ class Table
 
 	public function getQueryString($tableStr)
 	{
-		 if (array_key_exists($tableStr, $this->_createQueries)) {
+    if (array_key_exists($tableStr, $this->_createQueries)) {
               echo $this->_createQueries[$tableStr];
 	     }
 
