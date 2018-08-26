@@ -3,7 +3,7 @@
 ; Comments start with ';', as in php.ini
 
 [DB_CONNECTION]
-db_host = 127.0.0.1
+db_host = host.name
 db_user = root
-db_pass = secret
+db_pass = pass
 db_name = shadowdb
