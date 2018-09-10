@@ -11,12 +11,14 @@
   use Shadowapp\Console\Command\CreateController;
   use Shadowapp\Console\Command\CreateModel;
   use Shadowapp\Console\Command\CreateTable;
+  use Shadowapp\Console\Command\DropTable;
 
   $app = new Application('Shadow Framework','0.1');
   
   $app->add(new CreateController);
   $app->add(new CreateModel);  
   $app->add(new CreateTable);
+  $app->add(new DropTable);
 
   $app->run();
 ?>

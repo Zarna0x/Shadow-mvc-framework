@@ -19,7 +19,7 @@ class CreateTable extends Command
 		     ->setDescription('Create new Table, first you should create .json file in sh_db directory')
 		     ->addArgument('tablename',InputArgument::REQUIRED);
    }	
-
+ 
    public function execute(InputInterface $inp, OutputInterface $out)
    {
        $tableName = $inp->getArgument('tablename');
