@@ -13,6 +13,10 @@
         "null": "false",
         "default": "Come Here"
 	},
+	"user_id": {
+        "length": "11",
+        "type": "int"
+    },
 	"indexes": {
        "engine": "InnoDB",
        "charset": "utf8",

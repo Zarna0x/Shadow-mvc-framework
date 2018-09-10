@@ -14,12 +14,16 @@ class ShowTable extends Command
 {
   protected $db;
 
+  protected $dbName ; 
+
   public function __construct()
   {
     parent::__construct();
 
     $this->db = Connection::get();
 
+    $this->dbName = shcol('db_name',(new  \Shadowapp\Sys\Config)->get());
+    
   }
    
    public function configure()
@@ -34,11 +38,11 @@ class ShowTable extends Command
 
        $tables = $this->db->query( "SHOW TABLES" )->fetchAll(\PDO::FETCH_COLUMN);;
        if ( empty($tables) ) {
-         $out->writeln(" \033[41m There is no table in the Database  \033[0m ");
+         $out->writeln(" \033[41m There is no table in the Database ".$this->dbName."  \033[0m ");
          exit;
        }
 
-       array_walk($tables, function ( $tablename , $index) use ( $out ) {
+       array_walk($tables, function ( $tablename , $index)  {
          
          $correctIndex = $index+1;
          echo "\n \033[35m ". $correctIndex ." => ". $tablename ." \033[0m   \n\n";

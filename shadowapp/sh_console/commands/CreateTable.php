@@ -15,8 +15,8 @@ class CreateTable extends Command
    
    public function configure()
    {
-   	  $this->setName('create_table')
-		     ->setDescription('Create new Table, first you should create .json file in sh_db directory')
+   	  $this->setName('create_migration')
+		     ->setDescription('Create new Table and migrate it, first you should create .json file in sh_db directory')
 		     ->addArgument('tablename',InputArgument::REQUIRED);
    }	
  
