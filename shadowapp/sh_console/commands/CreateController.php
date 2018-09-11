@@ -53,7 +53,7 @@ class CreateController extends Command
      /*
      * Create New Controller
      * @param1 string $controllerName
-     * @param2 OutputInterface $o
+     * @param2 OutputInterface $out
      */
 	public function createController($controllerName,OutputInterface $out)
 	{
