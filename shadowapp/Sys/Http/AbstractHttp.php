@@ -21,6 +21,12 @@ class AbstractHttp
       return $this;
 	}
 
+    /*
+     * @desc set header
+     * @param String $headerKey
+     * @param mixed $headerValue
+     * @return Shadowapp\Sys\Http
+     */
 	public function setHeader ($headerKey, $headerValue) 
 	{
 
@@ -34,7 +40,12 @@ class AbstractHttp
 	}
 
 
-	public function setStatusCode ( $statusCode ) 
+    /*
+     * @desc set status code
+     * @param int $statusCode
+     * @return Shadowapp\Sys\Http
+     */
+   	public function setStatusCode ( $statusCode )
 	{
        if ( !is_integer( $statusCode ) ) {
           throw new \Shadowapp\Sys\Exceptions\WrongVariableTypeException;
@@ -44,12 +55,20 @@ class AbstractHttp
       return $this;
 	}
 
+	/*
+	 *  @desc get status code
+	 */
+
 	public function getStatusCode (  ) 
 	{
       return http_response_code();
-      
-	}
+    }
 
+    /*
+     * @desc Get all headers, or specified key
+     * @param String $headerKey
+     * @return Mixed
+     */
 	public function getHeaders( $headerKey = '' )
 	{
        $headerList = getAllHeaders();
