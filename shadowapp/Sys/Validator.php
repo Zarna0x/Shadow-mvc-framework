@@ -12,7 +12,7 @@ class Validator
    /*
    * Static Properties
    */
-   protected static $_rules = ['required','min','max','empty'];
+   protected static $_rules = ['required','min','max','empty','mail'];
    protected static $_message ;
    protected static $_fail;
    
@@ -34,8 +34,11 @@ class Validator
         
          foreach($rule as $data => $param)
          {
+
+
             if(is_string(self::validateRules($request,$fuck,$data,$param)))
             {
+
               self::$_message = self::validateRules($request,$fuck,$data,$param);
               self::$_fail    = true;
               return false;
@@ -48,7 +51,7 @@ class Validator
        }
     }   
   
-  }	
+  } 
 
   /*
   * Validate Rules
@@ -59,54 +62,64 @@ class Validator
   */
   public static function validateRules($req,$arg,$data,$param)
   {
-  	 if(in_array($data, self::$_rules))
-  	 {
-         	    
-  	     switch ($data) {
-  	     	
-  	     	case 'required':
-  	     		if(!isset($req[$arg]))
-  	     		{
-  	     			return "param is required<br>";
-  	     		    
-  	     		}
-  	     		 
-  	     	break;
 
-  	     	case 'min':
-  	     		if(strlen($req[$arg]) <= $param)
-  	     		{
-  	     			return $req[$arg]." length must be more than ".$param."<br>";
-  	     		    
-  	     		}
-  	     		 
-  	     	break;
+     if(in_array($data, self::$_rules))
+     {
+              
+          
+         switch ($data) {
+          
+          case 'required':
 
-  	     	case 'max':
-  	     		if(strlen($req[$arg]) >= $param)
-  	     		{
-  	     			return $req[$arg]." length must be less than ".$param."<br>";
-  	     		    
-  	     		}
-  	     		 
-  	     	break;
+            if(!isset($req[$arg]))
+            {
+              return $arg. "param is required<br>";
+                
+            }
+             
+          break;
 
-  	     	case 'empty':
-  	     		if(empty($req[$arg]))
-  	     		{
-                   return 'Data is empty<br>';
+          case 'min':
+            if(strlen($req[$arg]) <= $param)
+            {
+              return $arg." length must be more than ".$param."<br>";
+                
+            }
+             
+          break;
+
+          case 'max':
+
+            if(strlen($req[$arg]) >= $param)
+            {
+              return $arg." length must be less than ".$param."<br>";
+                
+            }
+             
+          break;
+
+          case 'empty':
+            if(empty($req[$arg]))
+            {
+                   return $arg. ' is empty<br>';
                   
-  	     		}
-  	     		 
-  	     	break;
+            }
+             
+          break;
+         
+         case 'mail':
+           if (filter_var($req[$arg],FILTER_VALIDATE_EMAIL)  === false) {
+               return $req[$arg].' is not valid email!';
+           }
 
+         break;     
 
-  	     	
-  	     	default:
-  	     	   echo "Wrong validation rule";
-  	     		break;
-  	     }
-  	 }
+          
+          default:
+             echo "Wrong validation rule";
+            break;
+         }
+     }
   }
 
   /*
