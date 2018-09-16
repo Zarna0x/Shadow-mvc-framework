@@ -8,10 +8,20 @@ namespace Shadowapp\Sys;
 
 class Router
 {
-	protected static $_uri = [];
-	protected static $_methods = [];
-	protected static $_request = [];
-	protected static $_requestList = [ 'AJAX', 'GET', 'POST' ];
+   /*
+	* @var array
+	*/
+    protected static $_routes;
+    
+    /*
+	* @var string
+	*/
+    protected static $_currentRequstMethod;
+    
+    /*
+	* @var array
+	*/
+    protected static $_requestList = [ 'AJAX', 'GET', 'POST' ];
 
 	/*
 	 * Define routes and collect it to $_uri array
@@ -19,10 +29,9 @@ class Router
 	 */
 	public static function define( $uri, $method = null, $request_type = "get" )
 	{
-		self::$_uri[] = trim( $uri, '/' );
-		self::$_methods[trim( $uri, '/' )] = $method;
-		self::$_request[trim( $uri, '/' )] = strtoupper( $request_type );
 
+	    self::$_routes[strtoupper( $request_type )][trim( $uri, '/' )] = $method;
+        self::$_currentRequstMethod = shcol("REQUEST_METHOD",$_SERVER);
 	}
 
 	/*
@@ -37,6 +46,7 @@ class Router
 		$uri = isset( $_GET['uri'] ) ? trim( strip_tags( $_GET['uri'] ) ) : '';
 		$uriArr = explode( '/', $uri );
 
+
 		#check if current uri belongs to Route
 
 
@@ -45,57 +55,43 @@ class Router
 		 */
 		$uriCustom = $uriArr[0];
 
+
 		/*
 		 * Method To Load
 		 */
 		$uriMethod = isset( $uriArr[1] ) ? $uriArr[1] : null;
-
-
-		foreach ( self::$_uri as $Key => $Value )
-		{
-
-			$routedUri = trim( substr( $uri, 0, strlen( $Value ) ) );
-
+        $routedUri = trim(shcol(0,explode('/', $uri)));
+         
+         if ( false === array_key_exists($routedUri, self::$_routes[self::$_currentRequstMethod]) ) {
+             echo 'No Route for given uri';
+             exit;
+         }
+ 
 			if ( empty( $routedUri ) && !empty( $uri ) )
 			{
 				
 				$routedUri = md5( rand( 0, 999999999999 ) );
 			}
 
-
-
-			if ( $Value == $routedUri )
-			{
-
-
-				$requestType = isset( self::$_request[$Value] ) ? self::$_request[$Value] : null;
-
-
-				if ( !in_array( $requestType, self::$_requestList ) )
-				{
-					echo 'Wrong Request method specified';
-					die();
-				}
-
-				if ( $_SERVER['REQUEST_METHOD'] == $requestType )
-				{
+			$routedArg = shcol($routedUri,self::$_routes[self::$_currentRequstMethod]);
 
 					/*
 					 * Check Route::Define arguments
 					 */
 
-					if ( is_array( self::$_methods[$Value] ) )
+					if ( is_array( $routedArg ) )
 					{
-
-						if ( false === array_key_exists('controller', self::$_methods[$Value]) ) {
+                      if ( false === array_key_exists('controller', $routedArg) ) {
                             
                             echo "You must specify Controller.";
                             exit;
                         }
 
-						$controllerName = "Shadowapp\\Controllers\\" . ucfirst( self::$_methods[$Value]['controller'] ) . "Shadow";
 
-						$methodName = isset( self::$_methods[$Value]['method'] ) ? self::$_methods[$Value]['method'] : null;
+						$controllerName = "Shadowapp\\Controllers\\" . ucfirst( $routedArg['controller'] ) . "Shadow";
+
+
+						$methodName = isset( $routedArg['method'] ) ? $routedArg['method'] : null;
 
 
 						/*
@@ -112,7 +108,7 @@ class Router
 						 * Check if Method Exists
 						 */
 
-						if ( isset( self::$_methods[$Value]['method'] ) )
+						if ( isset( $routedArg['method'] ) )
 						{
 
 							if ( method_exists( $controllerName, $methodName ) )
@@ -168,18 +164,17 @@ class Router
 
 							new $controllerName;
 						}
-						#code here
+	
 					}
 					/*
 					 * If Argument Is Function
 					 */
 					else
 					{
-						call_user_func( self::$_methods[$Value] );
+ 						call_user_func( $routedArg );
 					}
-				} // Wrong Request method else
-			}
-		}
+			
+		
 
 	}
 
