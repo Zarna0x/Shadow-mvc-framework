@@ -87,6 +87,12 @@ class Router
 					if ( is_array( self::$_methods[$Value] ) )
 					{
 
+						if ( false === array_key_exists('controller', self::$_methods[$Value]) ) {
+                            
+                            echo "You must specify Controller.";
+                            exit;
+                        }
+
 						$controllerName = "Shadowapp\\Controllers\\" . ucfirst( self::$_methods[$Value]['controller'] ) . "Shadow";
 
 						$methodName = isset( self::$_methods[$Value]['method'] ) ? self::$_methods[$Value]['method'] : null;
