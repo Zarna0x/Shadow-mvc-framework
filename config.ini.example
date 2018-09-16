@@ -7,3 +7,6 @@ db_host = host.name
 db_user = root
 db_pass = pass
 db_name = shadowdb
+
+[URL]
+base_folder = shadowfolder

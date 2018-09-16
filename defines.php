@@ -48,4 +48,14 @@ function response ()
 {
   return new Shadowapp\Sys\Http\Response;
 }
+
+function baseurl(){
+  
+  $baseFolder =  ( class_exists(\Shadowapp\Sys\Config::class) ) ? '/'.shcol('base_folder',(new \Shadowapp\Sys\Config)->get()) : '';
+  
+  $http = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off' ? 'https' : 'http';
+  
+  return $http.'://'.$_SERVER['SERVER_NAME'].$baseFolder;
+
+}
 ?>
