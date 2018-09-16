@@ -8,7 +8,7 @@ if (false === file_exists($composerFile)) {
 }
 
 
-$loader = require __DIR__ . '/vendor/autoload.php';
+$loader = require $composerFile;
 include_once 'defines.php';
 
 /*
