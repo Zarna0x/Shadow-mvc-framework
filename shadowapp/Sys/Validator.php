@@ -7,12 +7,14 @@
 
 namespace Shadowapp\Sys;
 
+use Shadowapp\Sys\Db\Query\Builder as DB;
+
 class Validator
 {
    /*
    * Static Properties
    */
-   protected static $_rules = ['required','min','max','empty','mail'];
+   protected static $_rules = ['required','min','max','empty','mail','number','unique'];
    protected static $_message ;
    protected static $_fail;
    
@@ -71,9 +73,9 @@ class Validator
           
           case 'required':
 
-            if(!isset($req[$arg]))
+            if(!isset($req[$arg]) && $param)
             {
-              return $arg. "param is required<br>";
+              return '<b>'.$arg. "</b> param is required<br>";
                 
             }
              
@@ -82,7 +84,7 @@ class Validator
           case 'min':
             if(strlen($req[$arg]) <= $param)
             {
-              return $arg." length must be more than ".$param."<br>";
+              return '<b>'.$arg."</b> length must be more than ".$param."<br>";
                 
             }
              
@@ -92,7 +94,7 @@ class Validator
 
             if(strlen($req[$arg]) >= $param)
             {
-              return $arg." length must be less than ".$param."<br>";
+              return '<b>'.$arg."</b> length must be less than ".$param."<br>";
                 
             }
              
@@ -101,20 +103,44 @@ class Validator
           case 'empty':
             if(empty($req[$arg]))
             {
-                   return $arg. ' is empty<br>';
+                   return '<b>'.$arg. '</b> is empty<br>';
                   
             }
              
           break;
          
          case 'mail':
-           if (filter_var($req[$arg],FILTER_VALIDATE_EMAIL)  === false) {
-               return $req[$arg].' is not valid email!';
+           if (filter_var($req[$arg],FILTER_VALIDATE_EMAIL)  === false && $param ) {
+               return '<b>'.$req[$arg].'</b> is not valid email!';
            }
 
-         break;     
+         break;
 
-          
+         case 'number':
+           if (  is_numeric( shcol($arg,$req) ) === false  && $param  ) {
+              return '<b>'.$arg. '</b> Must be correct phone number';
+           }
+         break;     
+         
+         case 'unique':
+         
+         $uniqValue = shcol($arg,$req);
+         
+         // check if table exists
+         $db = new DB; 
+
+          try 
+          {
+            if (false !== $db->select($arg)->from( $param )->where( $arg, $uniqValue )->get()->rowCount) {
+                 return $arg. " <b>".$uniqValue.'</b> already exists in database';
+            }
+          } catch (\Shadowapp\Sys\Exceptions\Db\WrongQueryException $e) {
+            return $e->getMessage();
+          }
+         
+         
+         break;
+            
           default:
              echo "Wrong validation rule";
             break;
@@ -137,8 +163,6 @@ class Validator
   {
     return self::$_message;
   }
-
- 
 
 }
 
