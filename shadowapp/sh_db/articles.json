@@ -1,0 +1,25 @@
+{
+	
+	"id" : {
+		"type": "int",
+		"length" : "11",
+		"null" : "true",
+		"primary_key": true,
+		"auto_increment": true
+	},
+	"description": {
+        "length": "255",
+        "type": "varchar",
+        "null": false,
+        "default": "Come Here"
+	},
+	"user_id": {
+        "length": "11",
+        "type": "int"
+    },
+	"indexes": {
+       "engine": "InnoDB",
+       "charset": "utf8",
+       "auto_increment": 40
+	}
+}

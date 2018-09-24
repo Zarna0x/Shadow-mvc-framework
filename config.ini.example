@@ -1,0 +1,12 @@
+; This is a sample configuration file for Shadow framework
+; You can Create your own config file and shadow will parse it using Shadowapp\Sys\Config class
+; Comments start with ';', as in php.ini
+
+[DB_CONNECTION]
+db_host = host.name
+db_user = root
+db_pass = pass
+db_name = shadowdb
+
+[FILESYSTEM]
+base_folder = psystem

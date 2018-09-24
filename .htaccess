@@ -1,0 +1,9 @@
+AddType application/x-httpd-php .shadow
+
+Options -Indexes
+RewriteEngine On
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+RewriteRule ^(.*)$ index.php?uri=$1 [QSA,L]

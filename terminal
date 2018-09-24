@@ -1,0 +1,39 @@
+#!/usr/bin/env php
+
+<?php
+
+  include_once 'vendor/autoload.php';
+  include_once 'defines.php';
+  
+
+  $commandsDir = getcwd().DS.'shadowapp'.DS.'sh_console'.DS.'commands';
+  
+  if (!file_exists($commandsDir) ) {
+     print(" \033[41m  Commands Directory not found \033[0m ");
+     exit;
+  }
+
+
+  $dirList = scandir($commandsDir);
+ 
+  
+
+  $namespace = "Shadowapp\\Console\\Command\\";
+
+  $app = new Symfony\Component\Console\Application('Shadow Framework','0.1');
+
+
+  foreach ( $dirList as $k => $file ) {
+    if ( $k > 1 ) {
+      $className = $namespace.shcol(0,explode('.', $file)); 
+      if ( !class_exists( $className ) ) {
+         continue;
+      }
+
+     $app->add(new $className);
+
+    }
+  }
+
+  $app->run();
+?>
