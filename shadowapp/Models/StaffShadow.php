@@ -90,6 +90,11 @@ Class StaffShadow extends Model
 
    public function confirm( $staffId )
    {
+     // Delete staff from confirm_table
+     $delQuery = $this->db->delete('confirm_table',[
+        'staff_id' => 1
+     ]);
 
+     var_dump($delQuery);
    }
 }

@@ -296,7 +296,43 @@ class Builder  implements \Shadowapp\Sys\Db\QueryBuilderInterface
 
      
    }
+   
 
+   public function delete($table,array $data)
+   {
+      if  ( !is_string( $table ) ) {
+        throw new  \ Shadowapp\Sys\Exceptions\WrongVariableTypeException("Wrong Variable Type. Table name have be string", 1);
+     } 
+
+     try {
+
+     $queryString = [];
+     $values = [];
+
+     foreach ($data as $key => $val) {
+          $queryString[] = $this->clean($key)." = ?";
+          $values[] = $val;
+      }
+       
+      $implodedQueryString = trim(implode(" AND ", $queryString));
+      
+
+      $sql = "DELETE FROM ".$this->clean($table)." WHERE ".$implodedQueryString;
+
+       $stmt = $this->_con->prepare( $sql );
+
+      if (!$stmt->execute( $values )) {
+         return false;
+      }
+
+      return true;
+       
+     } catch (\PDOException $e ) {
+        throw new \Shadowapp\Sys\Exceptions\Db\WrongQueryException($e->getMessage());
+     }
+   }
+
+   
 
    public function insert($table, array $data)
    {

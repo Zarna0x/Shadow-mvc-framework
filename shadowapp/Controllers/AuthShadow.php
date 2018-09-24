@@ -174,7 +174,7 @@ class AuthShadow
     
      $staffNeedsConfirm = $this->staffModel->checkIfStaffNeedsConfirm($staffId);
 
-     if ($staffNeedsConfirm) {
+     if (!$staffNeedsConfirm) {
       print('Error occured please contact administrator');
       die;
      }
