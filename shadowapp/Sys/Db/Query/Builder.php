@@ -415,7 +415,8 @@ class Builder  implements \Shadowapp\Sys\Db\QueryBuilderInterface
       }
 
       return true;
-
+      
+      $this->flushProperties();
   
      } catch ( \PDOException $e ) {
         throw new \Shadowapp\Sys\Exceptions\Db\WrongQueryException($e->getMessage());

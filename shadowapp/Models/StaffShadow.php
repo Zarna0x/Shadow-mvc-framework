@@ -106,4 +106,26 @@ Class StaffShadow extends Model
      return ($delQuery && $updateQuery);
       
    }
+
+
+   public function authenticate( array $request)
+   {
+      // grab user with given credentials
+      $request['password'] = hash('sha256',trim(shcol('password',$request)));
+      $request['confirmed'] = 1;
+
+      
+
+      $staffUser = $this->db->select('*')
+               ->from('staff')
+               ->where( $request )
+               ->get();
+      
+      if (!$staffUser) {
+        return false;
+      } 
+      
+     return shcol('0',$staffUser);
+
+   }
 }

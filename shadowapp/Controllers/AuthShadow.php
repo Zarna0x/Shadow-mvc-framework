@@ -28,25 +28,39 @@ class AuthShadow
   protected function checkLogin()
   {
      if (Session::has( 'staffMember' )) {
-         Request::redirect('/');
+         Request::redirect('/psystem');
      } 
   }
 
  	public function login ()
  	{
-     
+    if ( !Request::isPost() ) {
+        Request::redirect('register');
+    }
+    
+    $request = Request::getPost();
+
+    $this->validateLoginRequest($request);
+
+    $staff = $this->staffModel->authenticate($request);
+
+    if (!$staff) {
+      Session::flashShadow('error','Staff member not found! please make sure you registered and confirmed your emaill address');
+      Request::redirect('login');    
+    } 
+    
+    $this->startStaffSession( (array)$staff );
+    
  	}
 
 
- 	public function getRegister (  )
+  public function getRegister (  )
  	{
  		View::run('register/index');
  	}
 
   public function getLogin()
   {
-      
-    $this->sendMail('justnightmare123@gmail.com');
      View::run('login/index');
   }
 
@@ -188,8 +202,53 @@ class AuthShadow
     }
     
 
-    echo 'User Confirmed Succesfully. now You can login from here <a href="/login">click</a>';
+     echo 'User Confirmed Succesfully. now You can login from here <a href="/login">click</a>';
   
+   }
+
+   protected function startStaffSession( array $staff )
+   {
+      if (!Session::start('staffMember',[
+         'username' => shcol('username',$staff),
+         'email' => shcol('email',$staff),
+         'log_date' => date('Y-m-d h:i:s')
+      ])) {
+          Session::flashShadow('error','There was error logging user in. Please try again or contact administrator');
+          Request::redirect('login');
+      }
+
+
+
+      Session::flashShadow('success','Hello '.shcol('username',$staff).', you logged in Succesfully');
+      //Request::redirect('/');
+
+
+   }
+
+   protected function validateLoginRequest( array $request )
+   {
+
+    
+      Validator::run($request,[
+         'email' => [
+                'required' => true,
+                'min' => 3,
+                'max' => 120,
+                'mail' => true
+              ],
+           'password' => [
+                 'required' => true,
+                 'min' => 5,
+                 'max' => 150
+          ]
+      ]);
+
+      if ( Validator::failed() ) {
+          Session::flashShadow('error',Validator::errorMessage());
+          Request::redirect('login');
+      }
+
+     
    }
 
   

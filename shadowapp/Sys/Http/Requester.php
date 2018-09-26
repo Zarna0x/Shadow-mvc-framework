@@ -70,6 +70,8 @@ class Requester
        {
          Header('Location: home');
        }
+
+       exit();
 	}
 	
        /*
