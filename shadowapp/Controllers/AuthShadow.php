@@ -220,12 +220,10 @@ class AuthShadow
 
 
       Session::flashShadow('success','Hello '.shcol('username',$staff).', you logged in Succesfully');
-      //Request::redirect('/');
+      Request::redirect('/');
+ }
 
-
-   }
-
-   protected function validateLoginRequest( array $request )
+ protected function validateLoginRequest( array $request )
    {
 
     
