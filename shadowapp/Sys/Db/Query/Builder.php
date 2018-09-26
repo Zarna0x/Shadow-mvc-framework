@@ -369,6 +369,59 @@ class Builder  implements \Shadowapp\Sys\Db\QueryBuilderInterface
      }
 
    }
+   
+
+   public function update($table, array $data)
+   {
+     if  ( !is_string( $table ) ) {
+      throw new  \Shadowapp\Sys\Exceptions\WrongVariableTypeException("Wrong Variable Type. Table name have be string", 1);
+     }
+
+        try
+     {
+  
+      
+      $whereCollection = [];
+      $values          = [];
+      $setCollection   = [];
+
+
+      
+
+     
+     foreach ($data as $key => $val) {
+          $setCollection[] = $this->clean($key)." = ?";
+          $values[] = $val;
+      }
+     
+     $implodedSetString = implode(', ',$setCollection);
+      
+
+      $sql = "UPDATE ".$this->clean($table)." SET ".$implodedSetString;
+      
+      if ( count($this->_where) ) {
+        foreach ($this->_where as $key => $val) {
+          $whereCollection[] = $this->clean($key)." = ?";
+          $values[] = $val;
+        }
+        $implodedWhereString = implode(" AND ", $whereCollection);
+        $sql .= " WHERE ".$implodedWhereString;
+      }
+      
+      $stmt = $this->_con->prepare($sql);
+
+      if (!$stmt->execute( $values )) {
+         return false;
+      }
+
+      return true;
+
+  
+     } catch ( \PDOException $e ) {
+        throw new \Shadowapp\Sys\Exceptions\Db\WrongQueryException($e->getMessage());
+     }
+
+   }
 
 
 }

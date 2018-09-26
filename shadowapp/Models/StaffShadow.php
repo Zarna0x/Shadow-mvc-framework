@@ -92,9 +92,18 @@ Class StaffShadow extends Model
    {
      // Delete staff from confirm_table
      $delQuery = $this->db->delete('confirm_table',[
-        'staff_id' => 1
+        'staff_id' => $staffId
      ]);
+     
 
-     var_dump($delQuery);
+     //update staff confirmed status
+     $updateQuery = $this->db->where([
+       'id' => 3 
+     ])->update('staff',[
+       'confirmed' => 1,
+     ]);
+     
+     return ($delQuery && $updateQuery);
+      
    }
 }

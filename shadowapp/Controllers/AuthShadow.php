@@ -141,6 +141,7 @@ class AuthShadow
   public function sendMail( $mailToSend )
   {
      
+     $confirmUrl = '';
      
      $body = 'Hello, Please confirm your email address from this link => '.$confirmUrl;
 
@@ -180,6 +181,14 @@ class AuthShadow
      }
 
     $confirmStaff = $this->staffModel->confirm( $staffId );
+
+    if (!$confirmStaff) {
+      print( 'Error occured please contact administrator' );
+      die;
+    }
+    
+
+    echo 'User Confirmed Succesfully. now You can login from here <a href="/login">click</a>';
   
    }
 
