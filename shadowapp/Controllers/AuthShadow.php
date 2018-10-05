@@ -6,6 +6,7 @@ use Shadowapp\Sys\Http\Requester as Request;
 use Shadowapp\Sys\Validator;
 use Shadowapp\Sys\Session;
 use Shadowapp\Sys\Email\Email;
+use Shadowapp\Sys\Http\Middleware;
 use Shadowapp\Models\StaffShadow as StaffModel;
 
    
@@ -18,19 +19,12 @@ class AuthShadow
 
   public function __construct()
  	{
-    
-    $this->checkLogin(); 
+    Middleware::handle('auth.guest');
     $this->staffModel = new StaffModel;
     $this->email = new Email;
  	}
 
-  protected function checkLogin()
-  {
-     if (Session::has( 'staffMember' )) {
-         Request::redirect('/psystem');
-     } 
-  }
-
+  
  	public function login ()
  	{
     if ( !Request::isPost() ) {

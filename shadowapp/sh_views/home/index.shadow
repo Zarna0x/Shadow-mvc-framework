@@ -1,11 +1,4 @@
 
-<?php
-if(Shadowapp\Sys\Session::has('success'))
-{
-      Shadowapp\Sys\Session::flashOutput('success');
-}
-
-?>
 
 
 <nav class="navbar navbar-inverse">
@@ -26,6 +19,15 @@ if(Shadowapp\Sys\Session::has('success'))
 </nav>
   
 <div class="container">
+   <?php
+	if(Shadowapp\Sys\Session::has('success'))
+	{
+	      Shadowapp\Sys\Session::flashOutput('success');
+	}
+
+?>
+
+
   <h3>Dashboard Here</h3>
   <p>An inverted navbar is black instead of gray.</p>
 </div>

@@ -3,6 +3,7 @@
 define("BASEDIR", __DIR__);
 define("DS","/");
 define("JSON_DIR",BASEDIR.DS."shadowapp".DS."sh_db");
+define("MIDDLEWARE_DIR",BASEDIR.DS."shadowapp".DS."Components".DS."Middlewares");
 
 function setDir($dirPath)
 {
