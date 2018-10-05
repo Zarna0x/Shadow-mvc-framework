@@ -27,10 +27,10 @@ ShadowRouter::define('/contact',function(){
 */
 
 
-ShadowRouter::define('/',function () {
-  \Shadowapp\Sys\View::run('home/index');
- 
-});
+ShadowRouter::define('/',[
+  'controller' => 'staff',
+  'method' => 'dashboard'
+]);
 // Auth Routes
 
 ShadowRouter::define('/register',[
@@ -59,6 +59,10 @@ ShadowRouter::define('/confirm',[
    'method' => 'generateConfirmUrl'
 ]);
 
+ShadowRouter::define('/logout',[
+   'controller' => 'staff',
+   'method' => 'logout'
+]);
 
 /////// 
 

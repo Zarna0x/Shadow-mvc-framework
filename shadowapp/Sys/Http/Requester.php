@@ -77,17 +77,25 @@ class Requester
        /*
        * Get All Requests
        */
-       public static function all()
-        {
-	       if($_SERVER['REQUEST_METHOD'] == "GET")
-	       {
-	          return $_GET;
-	       }
-	       elseif ($_SERVER['REQUEST_METHOD'] == "POST") 
-	       {
+      public static function all()
+      {
+	     if($_SERVER['REQUEST_METHOD'] == "GET")
+	     {
+	         return $_GET;
+	      }
+	     elseif ($_SERVER['REQUEST_METHOD'] == "POST") 
+	     {
 	         return $_POST;
-	       }
-      }
+	     }
+    }
+
+   public static function redirectBack()
+   {
+      $backUrl = shcol('HTTP_REFERER',$_SERVER);
+      
+      self::redirect($backUrl);  
+   }
+
 
 
 }

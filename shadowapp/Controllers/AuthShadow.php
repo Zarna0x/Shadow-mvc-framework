@@ -24,7 +24,6 @@ class AuthShadow
     $this->email = new Email;
  	}
 
-
   protected function checkLogin()
   {
      if (Session::has( 'staffMember' )) {
@@ -216,16 +215,14 @@ class AuthShadow
           Session::flashShadow('error','There was error logging user in. Please try again or contact administrator');
           Request::redirect('login');
       }
+  
+     Session::flashShadow('success','Hello '.shcol('username',$staff).', you logged in Succesfully');
+     Request::redirect('/psystem');
+   }
 
-
-
-      Session::flashShadow('success','Hello '.shcol('username',$staff).', you logged in Succesfully');
-      Request::redirect('/');
- }
-
+ 
  protected function validateLoginRequest( array $request )
-   {
-
+ {
     
       Validator::run($request,[
          'email' => [
@@ -239,7 +236,7 @@ class AuthShadow
                  'min' => 5,
                  'max' => 150
           ]
-      ]);
+       ]);
 
       if ( Validator::failed() ) {
           Session::flashShadow('error',Validator::errorMessage());

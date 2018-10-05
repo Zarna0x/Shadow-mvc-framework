@@ -1,6 +1,6 @@
 <div class="container" id="logincontainer">
    <?php
-   echo '<pre>'.print_R($_SESSION,1).'</pre>'; 
+   
     if(Shadowapp\Sys\Session::has('error'))
     {
       Shadowapp\Sys\Session::flashOutput('error');
