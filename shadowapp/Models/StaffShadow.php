@@ -107,6 +107,12 @@ Class StaffShadow extends Model
       
    }
 
+   public function getStaffData($userId)
+   {
+     
+      
+   }
+
 
    public function authenticate( array $request)
    {

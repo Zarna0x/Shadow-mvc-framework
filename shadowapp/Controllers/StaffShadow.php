@@ -7,18 +7,30 @@
  use Shadowapp\Sys\Http\Requester as Request;
  use Shadowapp\Models\StaffShadow as StaffModel;
 
-   
-  class StaffShadow
-  {
+ class StaffShadow
+ {
+ 	protected $staffModel;
+ 	protected $userId;
+
   	public function __construct()
  	{
        Middleware::handle('auth.member');
+       $this->staffModel = new StaffModel;
+       $this->userId = shcol('id',Session::get('staffMember'));
  	}
     
     
  	public function dashboard()
  	{
-        View::run('home/index');
+ 	    $userInfo = $this->staffModel->find( $this->userId );
+        
+        if (!$userInfo) {
+        	$this->logout();
+        } 
+
+        View::run('home/index',[
+          'staffInfo' => (array)shcol('0',$userInfo)
+        ]);
  	}
 
  	public function logout()

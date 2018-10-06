@@ -27,6 +27,8 @@
 	      Shadowapp\Sys\Session::flashOutput('success');
 	}
 
+
+
 ?>
 
  <div class="row">
@@ -36,9 +38,10 @@
  		</div>
  		<div class="col-md-7" id="staff_info">
  			<span><ul>
- 			<li>Name: Giorgi</li>
- 			<li>Lastname: Zarnadze</li>
- 			<li>Username: Zran0x</li>
+ 			<li>Name: ^staffInfo[firstname]^</li>
+ 			<li>Lastname: ^staffInfo[lastname]^</li>
+ 			<li>Username: ^staffInfo[username]^</li>
+ 			<li>Email: ^staffInfo[email]^</li>
  		</ul> </span>
  		</div>
  	</div>

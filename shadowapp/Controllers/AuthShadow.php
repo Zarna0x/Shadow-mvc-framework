@@ -202,6 +202,7 @@ class AuthShadow
    protected function startStaffSession( array $staff )
    {
       if (!Session::start('staffMember',[
+         'id' => shcol('id',$staff),
          'username' => shcol('username',$staff),
          'email' => shcol('email',$staff),
          'log_date' => date('Y-m-d h:i:s')
