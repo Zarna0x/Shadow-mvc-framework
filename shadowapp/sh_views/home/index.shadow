@@ -29,8 +29,22 @@
 
 ?>
 
-
-  <h3>Dashboard Here</h3>
-  <p>An inverted navbar is black instead of gray.</p>
+ <div class="row">
+ 	<div class="col-md-5">
+ 		<div class="col-md-5">
+ 			<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSNwH9DCM75f13HIcF0PmBnDf8o2WVrCHk6haHMCNrTlfkO_iqy">
+ 		</div>
+ 		<div class="col-md-7" id="staff_info">
+ 			<span><ul>
+ 			<li>Name: Giorgi</li>
+ 			<li>Lastname: Zarnadze</li>
+ 			<li>Username: Zran0x</li>
+ 		</ul> </span>
+ 		</div>
+ 	</div>
+ 	
+ </div>
+  
+  
 </div>
 
