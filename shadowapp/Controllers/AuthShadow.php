@@ -210,15 +210,15 @@ class AuthShadow
           Request::redirect('login');
       }
   
-     Session::flashShadow('success','Hello '.shcol('username',$staff).', you logged in Succesfully');
-     Request::redirect('/psystem');
+      Session::flashShadow('success','Hello '.shcol('username',$staff).', you logged in Succesfully');
+      Request::redirect('/psystem');
    }
 
  
  protected function validateLoginRequest( array $request )
  {
-    
-      Validator::run($request,[
+
+    Validator::run($request,[
          'email' => [
                 'required' => true,
                 'min' => 3,

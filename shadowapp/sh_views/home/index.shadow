@@ -10,6 +10,8 @@
 
     <ul class="nav navbar-nav">
       <li class="active"><a href="#">Home</a></li>
+      <li><a href="#">My Tickets</a></li>
+      <li><a href="#">My Schedule</a></li>
       <li id="logout_id"><a href="<?php echo baseurl(); ?>/logout">Logout</a></li>
 
     </ul>

@@ -22,7 +22,7 @@ class Middleware
        $allowedMiddlewares = self::getMiddlewareClasses();
        
        if (!in_array(ucfirst($mdClass), $allowedMiddlewares )) {
-           return;    
+           throw new  \Shadowapp\Sys\Exceptions\MiddlewareNotFoundException("Middleware class ".ucfirst($mdClass)." not found.");
        }
 
        $fullMiddlewareClassName = self::$middlewareNamespace.ucfirst($mdClass);
@@ -34,7 +34,7 @@ class Middleware
        }
 
        if (!in_array($mdMethod, $currentMdClass->register())) {
-           return;     
+           throw new  \Shadowapp\Sys\Exceptions\MiddlewareMethodNotFoundException("Middleware method ".$mdMethod." not found in class ".ucfirst($mdClass));    
        } 
 
       (new \ReflectionMethod( $currentMdClass, $mdMethod ))
