@@ -261,11 +261,42 @@ class Builder  implements \Shadowapp\Sys\Db\QueryBuilderInterface
 
    protected function flushProperties()
    {
-      $this->_selectStack = [];
-      $this->_where = [];
-      $this->_from = '';
-      $this->_rawWhereData = [];
-      $this->_addWhereArr = [];
+     
+     $dataToReset = [
+      '_selectStack',
+      '_where',
+      '_from',
+      '_rawWhereData',
+      '_addWhereArr'
+     ];
+     $propetyList = get_class_vars(get_class($this));
+
+     foreach ($propetyList as $classProperty => $propertyValue) {
+          if (in_array($classProperty, $dataToReset)) {
+              $this->{$classProperty} = $propertyValue;
+          }
+     }
+    
+   }
+
+   public function first($dataType = 'array')
+   {
+     $result = $this->get();
+
+     if ( false === $result ) {
+      return false;
+     }
+
+     $allowedDataTypes = ['array','object'];
+
+     if ( !in_array($dataType, $allowedDataTypes) ) {
+        throw new  \ Shadowapp\Sys\Exceptions\WrongVariableTypeException("Wrong Variable Type. Variable should be array or object", 1);
+     }
+     
+     return ($dataType == 'object') ?
+        shcol('0',$result)
+      :  (array)shcol('0',$result) ;
+      
    }
 
 
