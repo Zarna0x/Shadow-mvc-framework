@@ -26,7 +26,9 @@
         
         if (!$userInfo) {
         	$this->logout();
-        } 
+        }
+
+        $userRole = $this->staffModel->getRole(shcol('0.id',$userInfo));  
 
         View::run('home/index',[
           'staffInfo' => (array)shcol('0',$userInfo)

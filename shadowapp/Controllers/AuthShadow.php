@@ -13,9 +13,7 @@ use Shadowapp\Models\StaffShadow as StaffModel;
 class AuthShadow
 {
   protected $staffModel;
-
   protected $email;
-
 
   public function __construct()
  	{

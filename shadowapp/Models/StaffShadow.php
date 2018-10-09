@@ -107,20 +107,26 @@ Class StaffShadow extends Model
       
    }
 
-   public function getStaffData($userId)
+   public function getRole ( $userId ) 
    {
-     
-      
+      $userRole = $this->db
+           ->select('role_name')
+          ->from('roles')
+          ->where([
+            'id' => $userId
+          ])->first('objects');
+
+
+echo '<pre>'.print_R($userRole,1).'</pre>'; 
    }
 
 
    public function authenticate( array $request)
    {
+
       // grab user with given credentials
       $request['password'] = hash('sha256',trim(shcol('password',$request)));
       $request['confirmed'] = 1;
-
-      
 
       $staffUser = $this->db->select('*')
                ->from('staff')

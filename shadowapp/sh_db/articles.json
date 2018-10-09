@@ -15,7 +15,8 @@
 	},
 	"user_id": {
         "length": "11",
-        "type": "int"
+        "type": "int",
+        "null": false
     },
 	"indexes": {
        "engine": "InnoDB",
