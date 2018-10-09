@@ -124,6 +124,17 @@ Class StaffShadow extends Model
       return shcol('role_name',$userRole);
    }
 
+   // staff has one role
+
+   public function role()
+   {
+    // this method should grab role of specified staff member
+    
+    //  $this->belongsTo('role');
+   }
+
+
+
 
    public function authenticate( array $request)
    {
@@ -144,4 +155,6 @@ Class StaffShadow extends Model
      return shcol('0',$staffUser);
 
    }
+
+
 }

@@ -23,17 +23,21 @@
     
  	public function dashboard()
  	{
- 	    $userInfo = $this->staffModel->find( $this->userId );
-        
+
+ 	    $userInfo = $this->staffModel->findFirst($this->userId);
+      
+
         if (!$userInfo) {
         	$this->logout();
         }
 
-        $userRole = $this->staffModel->getRole(shcol('0.id',$userInfo));  
+        $userRole = $this->staffModel->getRole(shcol('id',$userInfo));  
 
-      
+        $userRole1 = $this->staffModel->withRole()->find($this->userId);
+var_dump($userRole1);
+        die;
         View::run('home/index',[
-          'staffInfo' => (array)shcol('0',$userInfo)
+          'staffInfo' => $userInfo
         ]);
  	}
 

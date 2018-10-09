@@ -11,6 +11,8 @@ abstract class Model
    private   $table = '';
    protected $con;
    protected $_tableCollection = [];
+
+   protected $relationshipPrefix = 'with';
   
    public function __construct () 
    {
@@ -23,6 +25,13 @@ abstract class Model
       if (in_array($columnName, $this->getColumnList())) {
       	$this->_tableCollection[$columnName] = $val;
       }
+   }
+
+   public function __call($name, $arguments)
+   {
+      
+
+      die;
    }
 
    public function __get($columnName)
@@ -103,6 +112,22 @@ abstract class Model
 
    public function findFirst($primaryKeyOrArray, $dataType = 'array')
    {
-      var_dump($primaryKeyOrArray);
+      $result = $this->find( $primaryKeyOrArray );
+
+
+     if ( false === $result ) {
+      return false;
+     }
+
+     $allowedDataTypes = ['array','object'];
+
+     if ( !in_array($dataType, $allowedDataTypes) ) {
+        throw new  \ Shadowapp\Sys\Exceptions\WrongVariableTypeException("Wrong Variable Type. Variable should be array or object", 1);
+     }
+     
+     return ($dataType == 'object') ?
+        shcol('0',$result)
+      :  (array)shcol('0',$result) ;
+
    }  
 } 

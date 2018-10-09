@@ -10,8 +10,12 @@
  		parent::__construct();
  	}
 
+ 	// role has many staff members
 
- 	
+ 	public function staffs()
+ 	{
+       $this->hasMany('Staff');
+ 	}
 
   }
 ?>
