@@ -12,11 +12,13 @@ use Shadowapp\Models\StaffShadow as StaffModel;
    
 class AuthShadow
 {
+
   protected $staffModel;
   protected $email;
 
   public function __construct()
  	{
+     
     Middleware::handle('auth.guest');
     $this->staffModel = new StaffModel;
     $this->email = new Email;

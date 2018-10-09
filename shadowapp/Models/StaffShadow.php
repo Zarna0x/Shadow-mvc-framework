@@ -114,10 +114,14 @@ Class StaffShadow extends Model
           ->from('roles')
           ->where([
             'id' => $userId
-          ])->first('objects');
+          ])->first();
 
 
-echo '<pre>'.print_R($userRole,1).'</pre>'; 
+      if ( !$userRole ) {
+         return false;
+      } 
+
+      return shcol('role_name',$userRole);
    }
 
 

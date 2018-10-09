@@ -14,6 +14,7 @@
 
   	public function __construct()
  	{
+
        Middleware::handle('auth.member');
        $this->staffModel = new StaffModel;
        $this->userId = shcol('id',Session::get('staffMember'));
@@ -30,6 +31,7 @@
 
         $userRole = $this->staffModel->getRole(shcol('0.id',$userInfo));  
 
+      
         View::run('home/index',[
           'staffInfo' => (array)shcol('0',$userInfo)
         ]);

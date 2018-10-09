@@ -101,8 +101,8 @@ abstract class Model
        return $this->db->where($primaryKey,$primaryKeyOrArray)->get($this->table);
    }
 
-   public function findFirst()
+   public function findFirst($primaryKeyOrArray, $dataType = 'array')
    {
-      
+      var_dump($primaryKeyOrArray);
    }  
 } 

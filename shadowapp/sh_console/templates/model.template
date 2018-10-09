@@ -1,0 +1,14 @@
+<?php
+ namespace Shadowapp\Models;
+
+ use Shadowapp\Sys\Db\Model;
+   
+  class __modelName__ extends Model
+  {
+  	public function __construct()
+ 	{
+ 		parent::__construct();
+ 	}
+
+  }
+?>
