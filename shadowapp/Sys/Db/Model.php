@@ -5,14 +5,16 @@ namespace Shadowapp\Sys\Db;
 use Shadowapp\Sys\Db\Query\Builder as db;
 
 
-abstract class Model
+abstract class Model 
 {
    protected $db;
    private   $table = '';
    protected $con;
    protected $_tableCollection = [];
 
-   protected $relationshipPrefix = 'with';
+   protected $relatedTables = [];
+
+   
   
    public function __construct () 
    {
@@ -29,7 +31,7 @@ abstract class Model
 
    public function __call($name, $arguments)
    {
-      
+      $relMethodName = $prefix = 'with';
 
       die;
    }
@@ -92,6 +94,11 @@ abstract class Model
    	$offset = strpos($fullClassName->getShortName(),'Shadow');
    	$tableName = strtolower(substr($fullClassName->getShortName(),0,$offset));
    	return $tableName;
+   }
+
+   public function withRelated( $foreignTables )
+   {
+      $this->relatedTables[] =  $foreignTables;
    }
    
    /*

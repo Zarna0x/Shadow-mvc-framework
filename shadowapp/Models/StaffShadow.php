@@ -15,7 +15,16 @@ Class StaffShadow extends Model
   	parent::__construct();
 
   	$this->db = new DB;
+
+    var_dump($this->definedRelations);
   } 
+
+  public function registerRelations()
+  {
+    return [
+
+    ];
+  }
    
   public function add( array $fields )
   {

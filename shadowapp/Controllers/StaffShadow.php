@@ -13,12 +13,12 @@
  	protected $userId;
 
   	public function __construct()
- 	{
+  	{
 
        Middleware::handle('auth.member');
        $this->staffModel = new StaffModel;
        $this->userId = shcol('id',Session::get('staffMember'));
- 	}
+  	}
     
     
  	public function dashboard()
@@ -33,7 +33,7 @@
 
         $userRole = $this->staffModel->getRole(shcol('id',$userInfo));  
 
-        $userRole1 = $this->staffModel->withRole()->find($this->userId);
+        $userRole1 = $this->staffModel->withRelated('role');
 var_dump($userRole1);
         die;
         View::run('home/index',[
