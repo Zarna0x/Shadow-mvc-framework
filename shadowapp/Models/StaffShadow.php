@@ -16,16 +16,10 @@ Class StaffShadow extends Model
 
   	$this->db = new DB;
 
-    var_dump($this->definedRelations);
+    
   } 
 
-  public function registerRelations()
-  {
-    return [
-
-    ];
-  }
-   
+  
   public function add( array $fields )
   {
      $this->firstname = trim(shcol('firstname',$fields));
@@ -133,16 +127,15 @@ Class StaffShadow extends Model
       return shcol('role_name',$userRole);
    }
 
-   // staff has one role
+   
 
-   public function role()
-   {
-    // this method should grab role of specified staff member
-    
-    //  $this->belongsTo('role');
-   }
-
-
+    public function relateRoles()
+    {
+        return $this->belongsTo('roles',[
+          'primary_key' => 'id',
+          'foreign_key' => 'role_id' 
+        ]);
+    }
 
 
    public function authenticate( array $request)

@@ -24,18 +24,21 @@
  	public function dashboard()
  	{
 
- 	    $userInfo = $this->staffModel->findFirst($this->userId);
+ 	    $userInfo = $this->staffModel->withRelated('roles')->find(['confirmed' => 1]);
       
+echo '<pre>'.print_R($userInfo,1).'</pre>'; 
+
 
         if (!$userInfo) {
         	$this->logout();
         }
 
-        $userRole = $this->staffModel->getRole(shcol('id',$userInfo));  
+        //$userRole = $this->staffModel->getRole(shcol('id',$userInfo));  
 
-        $userRole1 = $this->staffModel->withRelated('role');
-var_dump($userRole1);
-        die;
+        
+      //  $userRoles = $this->staffModel->withRelated(['roles','othertable'])->find($this->userId);
+
+
         View::run('home/index',[
           'staffInfo' => $userInfo
         ]);

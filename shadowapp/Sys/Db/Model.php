@@ -3,23 +3,27 @@
 namespace Shadowapp\Sys\Db;
 
 use Shadowapp\Sys\Db\Query\Builder as db;
+use Shadowapp\Sys\Traits\RelationshipTrait;
 
 
 abstract class Model 
 {
+   use RelationshipTrait;
+
    protected $db;
    private   $table = '';
    protected $con;
    protected $_tableCollection = [];
-
-   protected $relatedTables = [];
-
    
-  
+   protected $relatedTables = [];
+   protected $relationshipPrefix = 'relate';
+   protected $relatedResults = [];
+   protected $fullModelClass = '';
+
    public function __construct () 
    {
       $this->db = new db;
-      $this->table = $this->getTable();
+      $this->getTable();
     } 
 
    public function __set($columnName,$val)
@@ -29,12 +33,18 @@ abstract class Model
       }
    }
 
-   public function __call($name, $arguments)
-   {
-      $relMethodName = $prefix = 'with';
+  public function __call( $name, $arguments )
+  {
+     $calledRelMethod = strtolower($name);
+     if (!in_array($calledRelMethod, $this->allowedRelationshipMethods)) {
+          return;
+     }
 
-      die;
-   }
+     $methodToCall = 'make'.$name;
+
+
+     return $this->$methodToCall($arguments ); 
+  }
 
    public function __get($columnName)
    {
@@ -91,14 +101,68 @@ abstract class Model
    protected function getTable()
    {
    	$fullClassName  = new \ReflectionClass(get_called_class());
-   	$offset = strpos($fullClassName->getShortName(),'Shadow');
-   	$tableName = strtolower(substr($fullClassName->getShortName(),0,$offset));
-   	return $tableName;
+    $offset = strpos($fullClassName->getShortName(),'Shadow');
+   	$this->fullModelClass = shcol('name',$fullClassName);
+    $this->table = strtolower(substr($fullClassName->getShortName(),0,$offset));
+    
    }
 
    public function withRelated( $foreignTables )
    {
-      $this->relatedTables[] =  $foreignTables;
+
+
+
+      if (!is_string($foreignTables) && !is_array( $foreignTables )) {
+          throw new  \ Shadowapp\Sys\Exceptions\WrongVariableTypeException("Wrong Variable Type. Variable should be array or string", 1);
+      }
+
+      
+      (is_array($foreignTables)) ?
+        $this->relatedTables = array_merge($foreignTables)
+      :
+        $this->relatedTables[] = $foreignTables
+      ;
+
+       $relationshipMethodList = $this->getRelatedMethods( $this->relatedTables);
+
+       if (!count($relationshipMethodList)) {
+           exit('Relationship Methods doesnot exists');
+       }
+      
+      $childObject = new $this->fullModelClass;
+      
+
+      foreach ( $relationshipMethodList as $method ) {
+          $this->relatedResults[$method] =  (new \ReflectionMethod( $childObject, $method ))->invoke($childObject);
+      }
+
+
+
+      return $this;
+
+   }
+
+   protected function getRelatedMethods( $foreignTables)
+   {
+      if (!is_string($foreignTables) && !is_array( $foreignTables )) {
+          throw new  \ Shadowapp\Sys\Exceptions\WrongVariableTypeException("Wrong Variable Type. Variable should be array or string", 1);
+      }
+      
+       
+       $expectedMethods = array_map(function ($table) {
+           return $this->relationshipPrefix.ucfirst($table);
+       },$foreignTables);
+       
+       $modelMethds = get_class_methods(get_called_class());
+
+
+      foreach ($expectedMethods as $k => $meth) {
+         if (!in_array($meth, $modelMethds)) {
+             unset($expectedMethods[$k]);
+         }
+      }
+
+      return $expectedMethods;
    }
    
    /*
@@ -107,14 +171,63 @@ abstract class Model
     */
    public function find($primaryKeyOrArray)
    {
+    
+
+    
       if (is_array($primaryKeyOrArray)) {
-        return  $this->db->where($primaryKeyOrArray)->get($this->table);
-       }
-       //Or Find result By Primary Key
-       
+        $result = $this->db->where($primaryKeyOrArray)->get($this->table);
+       } else {
+
        $primaryKey = ($this->db->getPrimaryKey($this->table) != false)? $this->db->getPrimaryKey($this->table) : 'id';     
        
-       return $this->db->where($primaryKey,$primaryKeyOrArray)->get($this->table);
+       $result = $this->db->where($primaryKey,$primaryKeyOrArray)->get($this->table);
+      }
+
+
+      if (false === $result) {
+         return false;
+      } 
+      
+      if (!count($this->relatedResults)) {
+         return $result;
+      }
+
+      $withRel = [];
+      
+      foreach ( $result as $mKey => $tabledata ) {
+        $withRel[] = $this->generateWithRelationships($tabledata);
+      }
+
+
+      return $withRel;
+
+     
+   }
+
+   private function generateWithRelationships( $fetchedData)
+   {
+      if (!is_object($fetchedData) && !is_array($fetchedData)) {
+          throw new  \ Shadowapp\Sys\Exceptions\WrongVariableTypeException("Wrong Variable Type. Variable should be array or object", 1);
+      } 
+
+     try {
+        foreach ($this->relatedResults as $rName => $rArray) {
+         extract($rArray);
+         $foreignKeyValue = shcol($foreign_key,$fetchedData);
+         
+         $stmt = (Connection::get())->prepare($sql);
+         
+         
+
+          $fetchedData->$rel_tbl_name = (false === $stmt->execute([$foreignKeyValue]))? [] : $stmt->fetchAll(\PDO::FETCH_OBJ);
+       }
+
+
+       return $fetchedData;
+
+     } catch (\PDOException $e) {
+        throw new \Shadowapp\Sys\Exceptions\Db\WrongQueryException($e->getMessage());
+     }
    }
 
    public function findFirst($primaryKeyOrArray, $dataType = 'array')
