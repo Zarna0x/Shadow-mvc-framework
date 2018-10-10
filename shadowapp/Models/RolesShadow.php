@@ -10,14 +10,16 @@
   	public function __construct()
  	{
  		parent::__construct();
- 	    var_dump($this->definedRelations);
  	}
 
  	// role has many staff members
 
- 	public function Staff()
+ 	public function relateStaff()
  	{
-       $this->hasMany('Staff');
+       return $this->hasMany('staff',array(
+          'foreign_key' => 'id',
+          'primary_key' => 'role_id'
+       ));
  	}
 
   }

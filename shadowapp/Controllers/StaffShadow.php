@@ -6,11 +6,12 @@
  use Shadowapp\Sys\Http\Middleware;
  use Shadowapp\Sys\Http\Requester as Request;
  use Shadowapp\Models\StaffShadow as StaffModel;
+ use Shadowapp\Models\RolesShadow as RolesModel;
 
  class StaffShadow
  {
  	protected $staffModel;
- 	protected $userId;
+  protected $userId;
 
   	public function __construct()
   	{
@@ -24,20 +25,16 @@
  	public function dashboard()
  	{
 
- 	    $userInfo = $this->staffModel->withRelated('roles')->find(['confirmed' => 1]);
+       $userInfo = $this->staffModel->withRelated('roles')->find(['confirmed' => 1]);
       
-echo '<pre>'.print_R($userInfo,1).'</pre>'; 
+       $RolesModel = new RolesModel;      
+      
+       $x = $RolesModel->withRelated('staff')->find(1);
 
 
         if (!$userInfo) {
         	$this->logout();
         }
-
-        //$userRole = $this->staffModel->getRole(shcol('id',$userInfo));  
-
-        
-      //  $userRoles = $this->staffModel->withRelated(['roles','othertable'])->find($this->userId);
-
 
         View::run('home/index',[
           'staffInfo' => $userInfo

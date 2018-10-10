@@ -42,7 +42,6 @@ abstract class Model
 
      $methodToCall = 'make'.$name;
 
-
      return $this->$methodToCall($arguments ); 
   }
 
@@ -217,7 +216,7 @@ abstract class Model
          
          $stmt = (Connection::get())->prepare($sql);
          
-         
+         $paramArray = [$primary_key => $foreignKeyValue];
 
           $fetchedData->$rel_tbl_name = (false === $stmt->execute([$foreignKeyValue]))? [] : $stmt->fetchAll(\PDO::FETCH_OBJ);
        }
@@ -226,7 +225,7 @@ abstract class Model
        return $fetchedData;
 
      } catch (\PDOException $e) {
-        throw new \Shadowapp\Sys\Exceptions\Db\WrongQueryException($e->getMessage());
+      throw new \Shadowapp\Sys\Exceptions\Db\WrongQueryException($e->getMessage());
      }
    }
 
