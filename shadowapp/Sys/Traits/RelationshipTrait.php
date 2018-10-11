@@ -36,8 +36,5 @@ trait RelationshipTrait
           'foreign_key' => shcol('foreign_key',$keyMapping),
           'sql' => $sql,
         ];
-
-          
-
     }
 }

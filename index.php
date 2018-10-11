@@ -12,6 +12,6 @@ session_start();
 include_once 'stack.php';
 ##########################
 
-baseurl();
+
 
 ?>

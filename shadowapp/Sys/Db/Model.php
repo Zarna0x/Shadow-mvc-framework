@@ -42,7 +42,7 @@ abstract class Model
 
      $methodToCall = 'make'.$name;
 
-     return $this->$methodToCall($arguments ); 
+     return $this->$methodToCall($arguments); 
   }
 
    public function __get($columnName)
@@ -154,7 +154,7 @@ abstract class Model
        
        $modelMethds = get_class_methods(get_called_class());
 
-
+    
       foreach ($expectedMethods as $k => $meth) {
          if (!in_array($meth, $modelMethds)) {
              unset($expectedMethods[$k]);

@@ -64,6 +64,17 @@ ShadowRouter::define('/logout',[
    'method' => 'logout'
 ]);
 
+
+
+// Run rest API routes.
+ShadowRouter::withPrefix('idx')->api('/auth',function () {
+  return 'ok';
+});
+
+ShadowRouter::api('/me',[
+   'controller' => 'api',
+   'method' => 'auth'
+]);
 /////// 
 
 /*

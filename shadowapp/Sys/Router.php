@@ -13,15 +13,25 @@ class Router
 	*/
     protected static $_routes;
     
-    /*
+   /*
 	* @var string
 	*/
     protected static $_currentRequstMethod;
     
-    /*
+   /*
 	* @var array
 	*/
     protected static $_requestList = [ 'AJAX', 'GET', 'POST' ];
+    
+   /*
+	* @var string
+	*/
+    protected static $defaultApiPrefix = 'api';
+
+   /*
+	* @var array
+	*/
+	protected static $apiRoutes = [];
 
 	/*
 	 * Define routes and collect it to $_uri array
@@ -29,9 +39,33 @@ class Router
 	 */
 	public static function define( $uri, $method = null, $request_type = "get" )
 	{
-
 	    self::$_routes[strtoupper( $request_type )][trim( $uri, '/' )] = $method;
         self::$_currentRequstMethod = shcol("REQUEST_METHOD",$_SERVER);
+	}
+
+
+	public static function api ($apiUri, $method = null, $request_type = "get")
+	{  
+
+
+	   self::$apiRoutes[strtoupper( $request_type )][trim( $apiUri, '/' )] = [
+           'apiPrefix' => self::$defaultApiPrefix,
+           'action'    => $method 
+		];
+		return new static;
+	}
+
+	protected static function getPrefix()
+	{
+		return self::$defaultApiPrefix;
+	}
+
+	public static function withPrefix ( string $apiPrefix ) 
+	{
+      if (!empty( $apiPrefix ) && is_string( $apiPrefix )) {
+         self::$defaultApiPrefix = strtolower(trim($apiPrefix));
+      } 
+      return new static;
 	}
 
 	/*
@@ -63,7 +97,14 @@ class Router
         $routedUri = trim(shcol(0,explode('/', $uri)));
          
          if ( false === array_key_exists($routedUri, self::$_routes[self::$_currentRequstMethod]) ) {
-             echo 'No Route for given uri';
+           
+         	 if (false === self::apiEndpointExists( $uri )) {
+                echo 'No Route for given uri';
+                exit;
+         	 }
+             
+
+             self::runAPI();
              exit;
          }
  
@@ -150,8 +191,6 @@ class Router
 										$obj, $methodName
 												], $paramArray );
                                 }
-
-								
 							}
 							else
 							{
@@ -174,11 +213,29 @@ class Router
  						call_user_func( $routedArg );
 					}
 				 // Wrong Request method else
-			
-		
+	}
 
+	private static function apiEndpointExists( $expectedEndpoint )
+	{
+      return (in_array( $expectedEndpoint, self::getListOfApiEndpoints() )) ? true : false ;
+	}
+
+
+	private static function getListOfApiEndpoints()
+	{
+		
+		$endpoints = [];
+
+		foreach (shcol(self::$_currentRequstMethod,self::$apiRoutes) as $endp => $endpArr ) {
+          $endpoints[] = shcol('apiPrefix',$endpArr)."/".$endp;
+		}
+
+		return $endpoints;
+	}
+
+	public static function runAPI()
+	{
+		
 	}
 
 }
-
-?>

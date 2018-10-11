@@ -9,6 +9,7 @@ if (false === file_exists($composerFile)) {
 
 
 $loader = require $composerFile;
+
 include_once 'defines.php';
 
 /*

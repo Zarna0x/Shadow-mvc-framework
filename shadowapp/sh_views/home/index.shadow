@@ -34,8 +34,8 @@
  <div class="row">
  	<div class="col-md-5">
  		<div class="col-md-5">
- 			<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSNwH9DCM75f13HIcF0PmBnDf8o2WVrCHk6haHMCNrTlfkO_iqy">
- 		</div>
+ 			<!-- <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSNwH9DCM75f13HIcF0PmBnDf8o2WVrCHk6haHMCNrTlfkO_iqy">
+ 		</div> -->
  		<div class="col-md-7" id="staff_info">
  			<span><ul>
  			<li>Name: ^staffInfo[firstname]^</li>
