@@ -27,9 +27,7 @@
 
        $userInfo = $this->staffModel->withRelated('roles')->find(['confirmed' => 1]);
       
-       $RolesModel = new RolesModel;      
-      
-       $x = $RolesModel->withRelated('staff')->find(1);
+      // $x = (new RolesModel)->withRelated('staff')->find(['email' => 'e@ma.il']);
 
 
         if (!$userInfo) {

@@ -22,8 +22,6 @@ OR
 ShadowRouter::define('/contact',function(){
 	Shadowapp\Sys\View::run('contact/contact');
 });
-
-
 */
 
 
@@ -31,6 +29,7 @@ ShadowRouter::define('/',[
   'controller' => 'staff',
   'method' => 'dashboard'
 ]);
+
 // Auth Routes
 
 ShadowRouter::define('/register',[
@@ -70,11 +69,17 @@ ShadowRouter::define('/logout',[
 ShadowRouter::withPrefix('idx')->api('/auth',function () {
   return 'ok';
 });
-
 ShadowRouter::api('/me',[
    'controller' => 'api',
    'method' => 'auth'
-]);
+],'get');
+
+ShadowRouter::withPrefix('sxva')->api('/wtf',[
+   'controller' => 'api',
+   'method' => 'auth'
+],'get');
+
+
 /////// 
 
 /*

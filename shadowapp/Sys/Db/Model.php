@@ -5,7 +5,6 @@ namespace Shadowapp\Sys\Db;
 use Shadowapp\Sys\Db\Query\Builder as db;
 use Shadowapp\Sys\Traits\RelationshipTrait;
 
-
 abstract class Model 
 {
    use RelationshipTrait;
@@ -170,9 +169,6 @@ abstract class Model
     */
    public function find($primaryKeyOrArray)
    {
-    
-
-    
       if (is_array($primaryKeyOrArray)) {
         $result = $this->db->where($primaryKeyOrArray)->get($this->table);
        } else {

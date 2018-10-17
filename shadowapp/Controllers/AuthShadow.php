@@ -18,7 +18,6 @@ class AuthShadow
 
   public function __construct()
  	{
-     
     Middleware::handle('auth.guest');
     $this->staffModel = new StaffModel;
     $this->email = new Email;

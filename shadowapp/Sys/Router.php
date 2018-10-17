@@ -28,6 +28,11 @@ class Router
 	*/
     protected static $defaultApiPrefix = 'api';
 
+    protected static $customApiPrefixes = [];
+
+    private static $withPrefixCounter = 0;
+   
+
    /*
 	* @var array
 	*/
@@ -45,28 +50,37 @@ class Router
 
 
 	public static function api ($apiUri, $method = null, $request_type = "get")
-	{  
+	{
 
-
-	   self::$apiRoutes[strtoupper( $request_type )][trim( $apiUri, '/' )] = [
-           'apiPrefix' => self::$defaultApiPrefix,
+	  
+	  
+	  self::$apiRoutes[strtoupper( $request_type )][trim( $apiUri, '/' )] = [
+           'apiPrefix' => self::getPrefix(),
            'action'    => $method 
 		];
 		return new static;
 	}
 
-	protected static function getPrefix()
+	public static function withPrefix(string $prefix) 
 	{
-		return self::$defaultApiPrefix;
-	}
-
-	public static function withPrefix ( string $apiPrefix ) 
-	{
-      if (!empty( $apiPrefix ) && is_string( $apiPrefix )) {
-         self::$defaultApiPrefix = strtolower(trim($apiPrefix));
-      } 
+     
+       if ($prefix != self::$defaultApiPrefix && !empty($prefix) && is_string($prefix)) {
+           self::$customApiPrefixes[self::$withPrefixCounter] = $prefix;
+        }
       return new static;
 	}
+
+	protected static function getPrefix()
+	{ 
+
+	  $currentPrefixCount = self::$withPrefixCounter;
+
+	  self::$withPrefixCounter++;
+
+	  return shcol($currentPrefixCount,self::$customApiPrefixes,self::$defaultApiPrefix); 
+	}
+
+	
 
 	/*
 	 * Run Routes
@@ -89,32 +103,49 @@ class Router
 		 */
 		$uriCustom = $uriArr[0];
 
-
 		/*
 		 * Method To Load
 		 */
 		$uriMethod = isset( $uriArr[1] ) ? $uriArr[1] : null;
         $routedUri = trim(shcol(0,explode('/', $uri)));
-         
-         if ( false === array_key_exists($routedUri, self::$_routes[self::$_currentRequstMethod]) ) {
+
+        $from = 'web';
+        
+        if ( false === array_key_exists($routedUri, self::$_routes[self::$_currentRequstMethod]) ) {
            
+
          	 if (false === self::apiEndpointExists( $uri )) {
                 echo 'No Route for given uri';
                 exit;
          	 }
              
-
-             self::runAPI();
-             exit;
+           $from = 'api';
          }
- 
+
+		  self::exec($routedUri,$uri,$from);
+	}
+
+	private static function exec($routedUri,$uri,$appType)
+	{
+           if (!in_array($appType, ['web','api'])) {
+               echo 'Wrong Application type';
+               exit;
+           }
+
 			if ( empty( $routedUri ) && !empty( $uri ) )
 			{
 				
 				$routedUri = md5( rand( 0, 999999999999 ) );
 			}
 
+			echo '<pre>'.print_R(self::$apiRoutes,1).'</pre>'; 
+			die;
+
+
 			$routedArg = shcol($routedUri,self::$_routes[self::$_currentRequstMethod]);
+
+die;
+
 
 					/*
 					 * Check Route::Define arguments

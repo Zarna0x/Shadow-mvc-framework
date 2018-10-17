@@ -15,8 +15,6 @@ Class StaffShadow extends Model
   	parent::__construct();
 
   	$this->db = new DB;
-
-    
   } 
 
   
