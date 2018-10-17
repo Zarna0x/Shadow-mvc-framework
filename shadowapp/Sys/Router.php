@@ -43,7 +43,7 @@ class Router
 	 * @param type $uri
 	 */
 	public static function define( $uri, $method = null, $request_type = "get" )
-	{
+	{  
 	    self::$_routes[strtoupper( $request_type )][trim( $uri, '/' )] = $method;
         self::$_currentRequstMethod = shcol("REQUEST_METHOD",$_SERVER);
 	}
@@ -52,9 +52,7 @@ class Router
 	public static function api ($apiUri, $method = null, $request_type = "get")
 	{
 
-	  
-	  
-	  self::$apiRoutes[strtoupper( $request_type )][trim( $apiUri, '/' )] = [
+	 self::$apiRoutes[strtoupper( $request_type )][trim( $apiUri, '/' )] = [
            'apiPrefix' => self::getPrefix(),
            'action'    => $method 
 		];
@@ -110,11 +108,10 @@ class Router
         $routedUri = trim(shcol(0,explode('/', $uri)));
 
         $from = 'web';
+
         
         if ( false === array_key_exists($routedUri, self::$_routes[self::$_currentRequstMethod]) ) {
-           
-
-         	 if (false === self::apiEndpointExists( $uri )) {
+             if (false === self::apiEndpointExists( $uri )) {
                 echo 'No Route for given uri';
                 exit;
          	 }
@@ -122,7 +119,8 @@ class Router
            $from = 'api';
          }
 
-		  self::exec($routedUri,$uri,$from);
+
+		 self::exec($routedUri,$uri,$from);
 	}
 
 	private static function exec($routedUri,$uri,$appType)
@@ -137,14 +135,22 @@ class Router
 				
 				$routedUri = md5( rand( 0, 999999999999 ) );
 			}
+           
+            if ( $appType == 'api' ) {
+                
+                $routedUri = implode('/',array_filter(explode('/',$uri),function ($value,$key) {
+                	if ($key > 0) {
+                        return true;
+                	}
+                },ARRAY_FILTER_USE_BOTH));
+                  
+            }
 
-			echo '<pre>'.print_R(self::$apiRoutes,1).'</pre>'; 
-			die;
 
-
-			$routedArg = shcol($routedUri,self::$_routes[self::$_currentRequstMethod]);
-
-die;
+          
+			$routedArg = ($appType == 'web') ?
+			    shcol($routedUri,self::$_routes[self::$_currentRequstMethod]):
+                shcol("{$routedUri}.action",self::$apiRoutes[self::$_currentRequstMethod]);
 
 
 					/*
@@ -256,8 +262,13 @@ die;
 	{
 		
 		$endpoints = [];
+        $t = shcol(self::$_currentRequstMethod,self::$apiRoutes);
 
-		foreach (shcol(self::$_currentRequstMethod,self::$apiRoutes) as $endp => $endpArr ) {
+        if (empty($t)) {
+            return $endpoints;
+        }
+       
+		foreach ($t as $endp => $endpArr ) {
           $endpoints[] = shcol('apiPrefix',$endpArr)."/".$endp;
 		}
 

@@ -62,22 +62,28 @@ ShadowRouter::define('/logout',[
    'controller' => 'staff',
    'method' => 'logout'
 ]);
+ShadowRouter::withPrefix('idx')->api('/auth/sd',function () {
+  echo 'ok';
+});
+
+ShadowRouter::define('/idx/auth',function(){
+  echo 'ok';
+});
 
 
 
 // Run rest API routes.
-ShadowRouter::withPrefix('idx')->api('/auth',function () {
-  return 'ok';
-});
-ShadowRouter::api('/me',[
-   'controller' => 'api',
-   'method' => 'auth'
-],'get');
 
 ShadowRouter::withPrefix('sxva')->api('/wtf',[
    'controller' => 'api',
    'method' => 'auth'
 ],'get');
+
+ShadowRouter::api('/me',[
+   'controller' => 'api',
+   'method' => 'auth'
+],'post');
+
 
 
 /////// 
