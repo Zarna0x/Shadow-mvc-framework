@@ -102,7 +102,8 @@ class Router {
         $routedUri = trim(shcol(0, explode('/', $uri)));
 
         $from = 'web';
-
+         
+         
 
         if (false === array_key_exists($routedUri, self::$_routes[self::$_currentRequstMethod])) {
             if (false === self::apiEndpointExists($uri)) {
@@ -232,6 +233,13 @@ class Router {
 
     private static function apiEndpointExists($expectedEndpoint) {
         return (in_array($expectedEndpoint, self::getListOfApiEndpoints())) ? true : false;
+    }
+
+    public static function setDefaultApiPrefix( $apiPrefix )
+    {
+        if ( !empty( $apiPrefix ) && is_string( $apiPrefix ) ) {
+            self::$defaultApiPrefix = trim(strip_tags($apiPrefix));
+        }
     }
 
     private static function getListOfApiEndpoints() {
