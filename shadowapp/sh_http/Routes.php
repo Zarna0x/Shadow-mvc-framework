@@ -70,14 +70,14 @@ ShadowRouter::withPrefix('idx')->api('/auth',function () {
 // Run rest API routes.
 
 
-ShadowRouter::setDefaultAPiPrefix('api');
+ShadowRouter::setDefaultApiPrefix('api');
 
-ShadowRouter::withPrefix('sxva')->api('/wtf',[
+ShadowRouter::withPrefix('sxva')->api('/wtf/{int:user}',[
    'controller' => 'api',
    'method' => 'auth'
 ],'get');
 
-ShadowRouter::api('/users/create/oh/{id}',[
+ShadowRouter::api('/users/{string:username}/create/{int:resourceid}',[
    'controller' => 'api',
    'method' => 'auth'
 ],'get');

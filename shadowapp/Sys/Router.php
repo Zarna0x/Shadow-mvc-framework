@@ -175,13 +175,27 @@ class Router {
             if (isset($routedArg['method'])) {
 
                 if (method_exists($controllerName, $methodName)) {
-
-
+                  
                     $paramString = trim(substr($uri, strlen($routedUri)), '/');
                     $paramArray = explode('/', $paramString);
                     $paramCount = (empty($paramString)) ? 0 : count($paramArray);
+       
+                    
+                    if ( $appType == 'api' ) {
+                       
+                       $methodParams = shcol($routedUri.'.params', self::$apiRoutes[self::$_currentRequstMethod],[]);
 
-                  $reflectionMethod = new \ReflectionMethod($controllerName, $methodName);
+                       
+                       $pApiArray = [];                
+                       $expUri = explode('/',$uri);
+                       foreach ( $methodParams as $key => $methValue) {
+                            $pApiArray[] =  $expUri[$key];
+                       } 
+
+                    }
+
+                    
+                    $reflectionMethod = new \ReflectionMethod($controllerName, $methodName);
 
                     $optArgCount = 0;
 
@@ -191,10 +205,12 @@ class Router {
                             $optArgCount++;
                         }
                     }
+
                     // Get All Available params
                     $numOfArgs = count($reflectionMethod->getParameters()) - $optArgCount;
 
-                    if ($paramCount < $numOfArgs) {
+                    
+                     if ($paramCount < $numOfArgs && $appType == 'web') {
                         echo 'Wrong Param count!';
                         die;
                     }
@@ -202,13 +218,25 @@ class Router {
 
                     $obj = new $controllerName;
 
-                    if (empty($paramCount)) {
-                        $reflectionMethod->invoke($obj);
-                    } else {
-                        call_user_func_array([
+                    if ($appType == 'web') {
+                        (empty($paramCount))?
+                          $reflectionMethod->invoke($obj):
+                          call_user_func_array([
                             $obj, $methodName
                                 ], $paramArray);
+                        exit;
                     }
+
+                  (empty($paramCount))?
+                        $reflectionMethod->invoke($obj):
+                        call_user_func_array([
+                            $obj, $methodName
+                                ], $pApiArray);
+
+                    
+                   
+
+
                 } else {
                     echo "Can't load  " . $methodName;
                     die;
@@ -234,7 +262,7 @@ class Router {
     private static function isApiRouteConfirmed( $uri )
     {
        $listOfApiEndpoints = self::getListOfApiEndpoints($uri);
-       
+        
        if ( !count($listOfApiEndpoints) ) {
            return false;
        }
@@ -251,6 +279,7 @@ class Router {
     {
          $uriArr = array_filter(explode('/',$uri));
          $endpointArr = array_filter(explode('/', $endpoint));
+  
          
          if ( count($uriArr) !== count($endpointArr) ) {
              return false;
@@ -271,19 +300,20 @@ class Router {
          }
 
          // update endpoint uri with correct value
-         
-         self::setCorrectApiUri($uri,$endpoint);
+          
+         self::setCorrectApiUri($uri,$endpoint,$diff);
          return true;
 
     }
 
-    private static function setCorrectApiUri ( $uri, $endpoint ) 
+    private static function setCorrectApiUri ( $uri, $endpoint, $params ) 
     {
          $endpointUri = self::getApiUriWithoutPrefix($endpoint);
          $actualUri   = self::getApiUriWithoutPrefix($uri);
          
          self::$apiRoutes[self::$_currentRequstMethod][$actualUri] = self::$apiRoutes[self::$_currentRequstMethod][$endpointUri];
-
+         self::$apiRoutes[self::$_currentRequstMethod][$actualUri]['params'] = $params;
+        
          unset(self::$apiRoutes[self::$_currentRequstMethod][$endpointUri]);
 
     }

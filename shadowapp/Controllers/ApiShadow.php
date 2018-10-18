@@ -10,10 +10,11 @@
            #code here
  	}
 
- 	public function auth ($ok='sd')
+ 	public function auth ($id,$resourceId)
  	{
- 		var_dump($ok);
- 		var_dump(123);
+ 		var_dump($id);
+ 		var_dump($resourceId);
+ 		
  	}
 
   }
