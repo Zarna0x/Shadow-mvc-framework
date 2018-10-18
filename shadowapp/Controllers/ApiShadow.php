@@ -10,9 +10,9 @@
            #code here
  	}
 
- 	public function auth ($id,$resourceId)
+ 	public function auth ($username,$resourceId)
  	{
- 		var_dump($id);
+ 		var_dump($username);
  		var_dump($resourceId);
  		
  	}

@@ -8,7 +8,12 @@
 
 namespace Shadowapp\Sys;
 
-class Router {
+use Shadowapp\Sys\Traits\RouteValidator;
+
+class Router
+{
+    use RouteValidator;
+
     /*
      * @var array
      */
@@ -189,7 +194,8 @@ class Router {
                        $pApiArray = [];                
                        $expUri = explode('/',$uri);
                        foreach ( $methodParams as $key => $methValue) {
-                            $pApiArray[] =  $expUri[$key];
+
+                            $pApiArray[$methValue] =  $expUri[$key];
                        } 
 
                     }
@@ -227,16 +233,20 @@ class Router {
                         exit;
                     }
 
-                  (empty($paramCount))?
+                # Validate Request
+
+                if (count($pApiArray)) {
+                   self::validate($pApiArray);
+                }
+
+ 
+                  (empty($pApiArray))?
                         $reflectionMethod->invoke($obj):
                         call_user_func_array([
                             $obj, $methodName
                                 ], $pApiArray);
 
                     
-                   
-
-
                 } else {
                     echo "Can't load  " . $methodName;
                     die;
@@ -327,31 +337,7 @@ class Router {
                     }, ARRAY_FILTER_USE_BOTH));
     }
     
-    private static function containsBraces ( $endArr ) 
-    {
-       $contains = false;
-       
-       foreach ( $endArr as $endp ) {
-          
-          if (self::stringContainsBraces($endp)) {
-             $contains = true;
-             break;
-          }
-       }
-
-       return $contains;
-    }
-
-    private static function stringContainsBraces ( $endp )
-    {
-       if (empty($endp)) {
-         return false;
-       }
-
-       return ($endp[0] == '{' && $endp[strlen($endp) - 1] == '}');
-    }
-
-
+    
     public static function setDefaultApiPrefix( $apiPrefix )
     {
         if ( !empty( $apiPrefix ) && is_string( $apiPrefix ) ) {
