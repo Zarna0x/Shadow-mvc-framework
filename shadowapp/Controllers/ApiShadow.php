@@ -10,9 +10,9 @@
            #code here
  	}
 
- 	public function auth ($ok)
+ 	public function auth ($ok='sd')
  	{
- 		var_dump($ok,$sxva);
+ 		var_dump($ok);
  		var_dump(123);
  	}
 

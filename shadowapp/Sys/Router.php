@@ -107,12 +107,8 @@ class Router {
 
 
         if (false === array_key_exists($routedUri, self::$_routes[self::$_currentRequstMethod])) {
-        
-           self::isApiRouteConfirmed($uri);
-           
-           die;
-       
-            if (false === self::apiEndpointExists($uri)) {
+         
+            if (false === self::isApiRouteConfirmed($uri)) {
                 echo 'No Route for given uri';
                 exit;
             }
@@ -137,13 +133,8 @@ class Router {
 
         if ($appType == 'api') {
 
-            $routedUri = implode('/', array_filter(explode('/', $uri), function ($value, $key) {
-                        if ($key > 0) {
-                            return true;
-                        }
-                    }, ARRAY_FILTER_USE_BOTH));
+            $routedUri = self::getApiUriWithoutPrefix($uri);
         }
-
 
         $routedArg = ($appType == 'web') ?
                 shcol($routedUri, self::$_routes[self::$_currentRequstMethod]) :
@@ -185,12 +176,12 @@ class Router {
 
                 if (method_exists($controllerName, $methodName)) {
 
+
                     $paramString = trim(substr($uri, strlen($routedUri)), '/');
                     $paramArray = explode('/', $paramString);
                     $paramCount = (empty($paramString)) ? 0 : count($paramArray);
 
-
-                    $reflectionMethod = new \ReflectionMethod($controllerName, $methodName);
+                  $reflectionMethod = new \ReflectionMethod($controllerName, $methodName);
 
                     $optArgCount = 0;
 
@@ -249,15 +240,17 @@ class Router {
        }
 
        foreach ( $listOfApiEndpoints as $endpoint ) {
-            var_dump(self::matches($uri,$endpoint));
+          if ( self::matches($uri,$endpoint) ) return true;  
        }
+
+       return false;
 
     }
 
     private static function matches ( $uri, $endpoint )
     {
-         $uriArr = explode('/',$uri);
-         $endpointArr = explode('/', $endpoint);
+         $uriArr = array_filter(explode('/',$uri));
+         $endpointArr = array_filter(explode('/', $endpoint));
          
          if ( count($uriArr) !== count($endpointArr) ) {
              return false;
@@ -269,11 +262,39 @@ class Router {
              return true;
          } 
 
-        echo '<pre>'.print_R($diff,1).'</pre>'; 
+         if ( count($diff) == 0 ) return false; 
 
-         // check if $diff containts contains braces 
+         foreach ($diff as $key => $part) {
+           if (!self::stringContainsBraces($part)) {
+             return false;
+           }
+         }
+
+         // update endpoint uri with correct value
          
-      
+         self::setCorrectApiUri($uri,$endpoint);
+         return true;
+
+    }
+
+    private static function setCorrectApiUri ( $uri, $endpoint ) 
+    {
+         $endpointUri = self::getApiUriWithoutPrefix($endpoint);
+         $actualUri   = self::getApiUriWithoutPrefix($uri);
+         
+         self::$apiRoutes[self::$_currentRequstMethod][$actualUri] = self::$apiRoutes[self::$_currentRequstMethod][$endpointUri];
+
+         unset(self::$apiRoutes[self::$_currentRequstMethod][$endpointUri]);
+
+    }
+
+    private static function getApiUriWithoutPrefix ($apiUri) {
+
+       return implode('/', array_filter(explode('/', $apiUri), function ($value, $key) {
+                        if ($key > 0) {
+                            return true;
+                        }
+                    }, ARRAY_FILTER_USE_BOTH));
     }
     
     private static function containsBraces ( $endArr ) 
