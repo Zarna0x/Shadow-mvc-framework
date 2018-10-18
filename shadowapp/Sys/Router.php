@@ -105,7 +105,13 @@ class Router {
          
          
 
+
         if (false === array_key_exists($routedUri, self::$_routes[self::$_currentRequstMethod])) {
+        
+           self::isApiRouteConfirmed($uri);
+           
+           die;
+       
             if (false === self::apiEndpointExists($uri)) {
                 echo 'No Route for given uri';
                 exit;
@@ -114,7 +120,7 @@ class Router {
             $from = 'api';
         }
 
-
+        
         self::exec($routedUri, $uri, $from);
     }
 
@@ -137,7 +143,6 @@ class Router {
                         }
                     }, ARRAY_FILTER_USE_BOTH));
         }
-
 
 
         $routedArg = ($appType == 'web') ?
@@ -234,6 +239,67 @@ class Router {
     private static function apiEndpointExists($expectedEndpoint) {
         return (in_array($expectedEndpoint, self::getListOfApiEndpoints())) ? true : false;
     }
+
+    private static function isApiRouteConfirmed( $uri )
+    {
+       $listOfApiEndpoints = self::getListOfApiEndpoints($uri);
+       
+       if ( !count($listOfApiEndpoints) ) {
+           return false;
+       }
+
+       foreach ( $listOfApiEndpoints as $endpoint ) {
+            var_dump(self::matches($uri,$endpoint));
+       }
+
+    }
+
+    private static function matches ( $uri, $endpoint )
+    {
+         $uriArr = explode('/',$uri);
+         $endpointArr = explode('/', $endpoint);
+         
+         if ( count($uriArr) !== count($endpointArr) ) {
+             return false;
+         }
+
+         $diff = array_diff($endpointArr,$uriArr);
+         
+         if (!self::containsBraces( $endpointArr ) && count($diff) == 0) {
+             return true;
+         } 
+
+        echo '<pre>'.print_R($diff,1).'</pre>'; 
+
+         // check if $diff containts contains braces 
+         
+      
+    }
+    
+    private static function containsBraces ( $endArr ) 
+    {
+       $contains = false;
+       
+       foreach ( $endArr as $endp ) {
+          
+          if (self::stringContainsBraces($endp)) {
+             $contains = true;
+             break;
+          }
+       }
+
+       return $contains;
+    }
+
+    private static function stringContainsBraces ( $endp )
+    {
+       if (empty($endp)) {
+         return false;
+       }
+
+       return ($endp[0] == '{' && $endp[strlen($endp) - 1] == '}');
+    }
+
 
     public static function setDefaultApiPrefix( $apiPrefix )
     {
