@@ -8,11 +8,11 @@
 
 namespace Shadowapp\Sys;
 
-use Shadowapp\Sys\Traits\RouteValidator;
+use Shadowapp\Sys\Traits\RouteValidatorTrait;
 
 class Router
 {
-    use RouteValidator;
+    use RouteValidatorTrait;
 
     /*
      * @var array

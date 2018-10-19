@@ -2,7 +2,7 @@
 
 namespace Shadowapp\Sys\Traits;
 
-trait RouteValidator
+trait RouteValidatorTrait
 {
 	protected static $allowedTypes = [
       'int','string'
