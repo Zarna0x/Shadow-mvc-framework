@@ -8,6 +8,7 @@
 
 namespace Shadowapp\Sys;
 
+use Shadowapp\Sys\Http\Middleware;
 use Shadowapp\Sys\Traits\RouteValidatorTrait;
 
 class Router
@@ -35,9 +36,14 @@ class Router
      */
     protected static $defaultApiPrefix = 'api';
     protected static $customApiPrefixes = [];
-    private static $withPrefixCounter = 0;
+    protected static $middlewares = [];
+    
 
-
+    private static $counters = [
+      'withPrefixCounter'     => 0,
+      'withMiddlewareCounter' => 0
+    ];
+    
     /*
      * @var array
      */
@@ -50,6 +56,7 @@ class Router
 
     public static function define($uri, $method = null, $request_type = "get") {
         self::$_routes[strtoupper($request_type)][trim($uri, '/')] = $method;
+        self::$_routes[strtoupper($request_type)][trim($uri, '/')]['middleware'] = self::getMiddleware();
         self::$_currentRequstMethod = shcol("REQUEST_METHOD", $_SERVER);
     }
 
@@ -57,6 +64,7 @@ class Router
 
         self::$apiRoutes[strtoupper($request_type)][trim($apiUri, '/')] = [
             'apiPrefix' => self::getPrefix(),
+            'middleware' => self::getMiddleware(),
             'action' => $method
         ];
         return new static;
@@ -65,18 +73,37 @@ class Router
     public static function withPrefix(string $prefix) {
 
         if ($prefix != self::$defaultApiPrefix && !empty($prefix) && is_string($prefix)) {
-            self::$customApiPrefixes[self::$withPrefixCounter] = $prefix;
+            self::$customApiPrefixes[self::$counters['withPrefixCounter']] = $prefix;
         }
         return new static;
     }
 
+    public static function withMiddleware( string $middlewareMethod )
+    {
+       if ((is_string( $middlewareMethod ) && !empty( $middlewareMethod )) && Middleware::exists($middlewareMethod)) {
+             self::$middlewares[self::$counters['withMiddlewareCounter']] = $middlewareMethod;
+       }
+
+      return new static;
+    }
+
     protected static function getPrefix() {
 
-        $currentPrefixCount = self::$withPrefixCounter;
+        $currentPrefixCount = self::$counters['withPrefixCounter'];
 
-        self::$withPrefixCounter++;
+        self::$counters['withPrefixCounter']++;
 
         return shcol($currentPrefixCount, self::$customApiPrefixes, self::$defaultApiPrefix);
+    }
+
+
+    protected static function getMiddleware()
+    {
+        $currentMiddlewareCount = self::$counters['withMiddlewareCounter'];
+        
+        self::$counters['withMiddlewareCounter']++;
+
+       return shcol($currentMiddlewareCount, self::$middlewares, null);   
     }
 
     /*
@@ -186,12 +213,13 @@ class Router
                     $paramCount = (empty($paramString)) ? 0 : count($paramArray);
        
                     
+                    $pApiArray = [];     
                     if ( $appType == 'api' ) {
                        
                        $methodParams = shcol($routedUri.'.params', self::$apiRoutes[self::$_currentRequstMethod],[]);
 
                        
-                       $pApiArray = [];                
+                                  
                        $expUri = explode('/',$uri);
                        foreach ( $methodParams as $key => $methValue) {
 
@@ -199,8 +227,16 @@ class Router
                        } 
 
                     }
-
                     
+                   
+                   $currentMiddlewareToExecute = ( $appType == 'api')?
+                        shcol('middleware',self::$apiRoutes[self::$_currentRequstMethod][$routedUri],null)
+                   : shcol('middleware',self::$_routes[self::$_currentRequstMethod][$routedUri],null);
+                    
+                    if (!is_null( $currentMiddlewareToExecute )) {
+                        Middleware::handle($currentMiddlewareToExecute);
+                    }
+
                     $reflectionMethod = new \ReflectionMethod($controllerName, $methodName);
 
                     $optArgCount = 0;
@@ -220,10 +256,15 @@ class Router
                         echo 'Wrong Param count!';
                         die;
                     }
-
+                    
+                    
+                    if (count($pApiArray) && $appType == 'api') {
+                      self::validate($pApiArray);
+                    } 
 
                     $obj = new $controllerName;
 
+                    
                     if ($appType == 'web') {
                         (empty($paramCount))?
                           $reflectionMethod->invoke($obj):
@@ -235,11 +276,6 @@ class Router
 
                 # Validate Request
 
-                if (count($pApiArray)) {
-                   self::validate($pApiArray);
-                }
-
- 
                   (empty($pApiArray))?
                         $reflectionMethod->invoke($obj):
                         call_user_func_array([

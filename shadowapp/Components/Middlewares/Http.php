@@ -8,6 +8,12 @@ class Http implements MiddlewareInterface
 {
 	public function register() : array
 	{
+        return ['test'];
+	}
 
+	public static function test()
+	{
+		echo 'okkk';
+		exit;
 	}
 }

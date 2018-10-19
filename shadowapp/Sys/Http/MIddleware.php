@@ -11,10 +11,10 @@ class Middleware
     protected static $middlewareNamespace = "Shadowapp\\Components\\Middlewares\\";
     
 
-	public static function handle( $middlewareParts )
+	public static function handle( string $middlewareParts )
 	{
        if (!is_string( $middlewareParts ) || empty($middlewareParts)) {
-          throw new \Shadowapp\Sys\Exceptions\WrongVariableTypeExcetion("Middleware Parameter have to be string", 1);
+          throw new \Shadowapp\Sys\Exceptions\WrongVariableTypeException("Middleware Parameter have to be string", 1);
        }
 
        list($mdClass,$mdMethod) =  explode('.', $middlewareParts);
@@ -42,6 +42,37 @@ class Middleware
       
 
 	}
+
+    public static function exists ( string $middlewareParts )
+    {
+      $middlewareArray = explode('.', $middlewareParts);
+       
+      if (count($middlewareArray) != 2) {
+        
+         return false;
+      } 
+
+      list($mdClass,$mdMethod) =  $middlewareArray;
+       
+       $allowedMiddlewares = self::getMiddlewareClasses();
+       if (!in_array(ucfirst($mdClass), $allowedMiddlewares )) {
+           return false;
+       }
+
+       $fullMiddlewareClassName = self::$middlewareNamespace.ucfirst($mdClass);
+       
+       $currentMdClass = new $fullMiddlewareClassName;
+
+       if ( !$currentMdClass instanceof MiddlewareInterface) {
+         return false;
+       }
+
+       if (!in_array($mdMethod, $currentMdClass->register())) {
+           return false;  
+       } 
+
+       return true;
+    }
 
     public static function getMiddlewareClasses()
     {

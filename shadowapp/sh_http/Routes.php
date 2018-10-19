@@ -58,17 +58,22 @@ ShadowRouter::define('/confirm',[
    'method' => 'generateConfirmUrl'
 ]);
 
-ShadowRouter::define('/logout',[
+ShadowRouter::withMiddleware('auth.member')->define('/logout',[
    'controller' => 'staff',
    'method' => 'logout'
 ]);
+
+ShadowRouter::withMiddleware('http.test')->define('/withmid',[
+  'controller' => 'api',
+  'method' => 'withMidleware'
+]);
+
 ShadowRouter::withPrefix('idx')->api('/auth',function () {
   echo 'ok';
 });
 
 
 // Run rest API routes.
-
 
 ShadowRouter::setDefaultApiPrefix('api');
 
@@ -77,7 +82,7 @@ ShadowRouter::withPrefix('sxva')->api('/wtf/{int:user}',[
    'method' => 'auth'
 ],'get');
 
-ShadowRouter::api('/users/{string:username}/create/{int:resourceid}',[
+ShadowRouter::withMiddleware('http.test')->api('/users/{string:username}/create/{int:resourceid}',[
    'controller' => 'api',
    'method' => 'auth'
 ],'get');

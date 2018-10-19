@@ -7,14 +7,17 @@
   {
   	public function __construct()
  	{
-           #code here
+           var_dump('kkkkkkkkkkk');
  	}
 
- 	public function auth ($username,$resourceId)
+ 	public function auth ($username,$resourceId,$k = 'asd')
  	{
- 		var_dump($username);
- 		var_dump($resourceId);
- 		
+     var_dump($username);
+ 	}
+
+ 	public function withMidleware()
+ 	{
+        var_dump(123);
  	}
 
   }
