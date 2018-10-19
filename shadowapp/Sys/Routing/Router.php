@@ -6,12 +6,12 @@
  * (c) 2016
  */
 
-namespace Shadowapp\Sys;
+namespace Shadowapp\Sys\Routing;
 
 use Shadowapp\Sys\Http\Middleware;
 use Shadowapp\Sys\Traits\RouteValidatorTrait;
 
-class Router
+class Router implements RouterInterface
 {
     use RouteValidatorTrait;
 
