@@ -8,6 +8,7 @@
 
 namespace Shadowapp\Sys\Routing;
 
+use Closure;
 use Shadowapp\Sys\Http\Middleware;
 use Shadowapp\Sys\Traits\RouteValidatorTrait;
 
@@ -229,13 +230,7 @@ class Router implements RouterInterface
                     }
                     
                    
-                   $currentMiddlewareToExecute = ( $appType == 'api')?
-                        shcol('middleware',self::$apiRoutes[self::$_currentRequstMethod][$routedUri],null)
-                   : shcol('middleware',self::$_routes[self::$_currentRequstMethod][$routedUri],null);
-                    
-                    if (!is_null( $currentMiddlewareToExecute )) {
-                        Middleware::handle($currentMiddlewareToExecute);
-                    }
+                    self::checkMiddleware($appType , $routedUri );
 
                     $reflectionMethod = new \ReflectionMethod($controllerName, $methodName);
 
@@ -289,6 +284,8 @@ class Router implements RouterInterface
                 }
             } else {
 
+                self::checkMiddleware($appType , $routedUri );
+
                 new $controllerName;
             }
             #code here
@@ -296,12 +293,30 @@ class Router implements RouterInterface
         /*
          * If Argument Is Function
          */ else {
+            self::checkMiddleware($appType , $routedUri );
             call_user_func($routedArg);
         }
         // Wrong Request method else
     }
 
-    private static function apiEndpointExists($expectedEndpoint) {
+    protected static function checkMiddleware ($appType , $routedUri ) 
+    {
+       $currentMiddlewareToExecute = ( $appType == 'api')?
+                        shcol('middleware',self::$apiRoutes[self::$_currentRequstMethod][$routedUri],null)
+                   : shcol('middleware',self::$_routes[self::$_currentRequstMethod][$routedUri],null);
+                    
+                    if (!is_null( $currentMiddlewareToExecute )) {
+                        Middleware::handle($currentMiddlewareToExecute);
+                    }
+    }
+
+
+    public static function group( array $groupOptions, Closure $func )
+    {
+       call_user_func_array($func,[]);
+    }
+
+    public static function apiEndpointExists($expectedEndpoint) {
         return (in_array($expectedEndpoint, self::getListOfApiEndpoints())) ? true : false;
     }
 
