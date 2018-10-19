@@ -31,21 +31,10 @@ Class View
 	     if($params != null)
 	     {
                extract($params);
-	     
-	           //print_r($params);
-	           #echo '<pre>',print_r(get_included_files(),1),'</pre>';
-	          
 	           $templateCompiler = new \Shadowapp\Components\TemplateCompiler($filePath);
-	           // $appendRules = [
-               //      'include' 
-	           // ];
-
-	           // $params = array_merge($params,$appendRules);
 	           
 	           $templateCompiler->assign($params);
-	          //  var_dump($templateCompiler->template);
-	         //echo "<pre>",print_r($templateCompiler->assignedValues,1),"</pre>";
-              if ($autoBootstrap) {
+	          if ($autoBootstrap) {
 
 	          include_once $viewPath.'/index.shadow';
               include_once $templateCompiler->run();
