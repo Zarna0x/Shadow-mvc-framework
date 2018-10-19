@@ -32,29 +32,31 @@ trait RouteValidatorTrait
        $patternType = $patternArray[0];
 
        if ( !in_array($patternType,self::$allowedTypes) ) {
-         echo $patternType. ' is not correct pattern type. allowed types are '.implode(', ', self::$allowedTypes);
-         exit;
+         $message = $patternType. ' is not correct pattern type. allowed types are '.implode(', ', self::$allowedTypes);
+
+         throw new \Shadowapp\Sys\Exceptions\Routing\WrongUriParameterException($message);
        }
        
 
        switch ( $patternType ) {
          case 'string':
           if ( !ctype_alpha($value) )  {
-             echo $patternArray[1]. " have to be ".$patternType;
-           	 exit;
+             $message = $patternArray[1]. " have to be ".$patternType;
+             throw new \Shadowapp\Sys\Exceptions\Routing\WrongUriParameterException($message);
            }
          break;
 
          case 'int':
            if ( !is_numeric($value) )  {
-             echo $patternArray[1]. " have to be ".$patternType;
-           	 exit;
+             $message = $patternArray[1]. " have to be ".$patternType;
+
+           	  throw new \Shadowapp\Sys\Exceptions\Routing\WrongUriParameterException($message);
            }
 
          break;
 
          default:
-         return false;
+         return ;
          break;
        }    
   
