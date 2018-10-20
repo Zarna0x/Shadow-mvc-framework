@@ -1,7 +1,6 @@
 <?php
 
-
-use Shadowapp\Sys\Router as ShadowRouter;
+use Shadowapp\Sys\Routing\Router as ShadowRouter;
 
 /*
 * Define Routes Here
@@ -77,6 +76,11 @@ ShadowRouter::withPrefix('idx')->api('/auth',function () {
 
 ShadowRouter::setDefaultApiPrefix('api');
 
+
+// ShadowRouter::StartGroup(['middleware' => 'auth.http',
+// 'apiPrefix'  => 'sxvaprefix']);
+
+
 ShadowRouter::withPrefix('sxva')->api('/wtf/{int:user}',[
    'controller' => 'api',
    'method' => 'auth'
@@ -87,13 +91,25 @@ ShadowRouter::withMiddleware('http.test')->api('/users/{string:username}/create/
    'method' => 'auth'
 ],'get');
 
-
-
-
-
 ShadowRouter::api('/ok',function  () {
   echo 'hmm';
 });
+
+// ShadowRouter::endGroup();
+
+
+
+//-------------------------------------//
+
+ShadowRouter::group([
+// 'middleware' => 'auth.http',
+// 'apiPrefix'  => 'sxvaprefix'
+],function ($k) {
+
+  ShadowRouter::define('/modiaq','auth');
+});
+
+
 
 
 /////// 

@@ -18,10 +18,17 @@ class AuthShadow
 
   public function __construct()
  	{
-    Middleware::handle('auth.guest');
+
+    var_dump(123123123);
+    
     $this->staffModel = new StaffModel;
     $this->email = new Email;
  	}
+
+  public function ok()
+  {
+    echo 'OKKK';
+  }
 
   
  	public function login ()

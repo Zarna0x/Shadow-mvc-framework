@@ -56,6 +56,21 @@ class Router implements RouterInterface
      */
 
     public static function define($uri, $method = null, $request_type = "get") {
+        
+        self::validateRouteParams($method);
+
+        if (is_string($method)) {
+           $method = explode('@', $method);
+           $controllerAndMethodArray = ['controller','method'];
+
+           foreach ($controllerAndMethodArray as $key => $value) {
+             if (isset($method[$key])){
+                $method[$value] = $method[$key];
+                unset($method[$key]);
+             }
+           } 
+        }
+ 
         self::$_routes[strtoupper($request_type)][trim($uri, '/')] = $method;
         self::$_routes[strtoupper($request_type)][trim($uri, '/')]['middleware'] = self::getMiddleware();
         self::$_currentRequstMethod = shcol("REQUEST_METHOD", $_SERVER);
@@ -313,7 +328,8 @@ class Router implements RouterInterface
 
     public static function group( array $groupOptions, Closure $func )
     {
-       call_user_func_array($func,[]);
+       echo '<pre>'.print_R($groupOptions,1).'</pre>';  
+       call_user_func_array($func,['pk']);
     }
 
     public static function apiEndpointExists($expectedEndpoint) {
@@ -387,6 +403,8 @@ class Router implements RouterInterface
                         }
                     }, ARRAY_FILTER_USE_BOTH));
     }
+
+
     
     
     public static function setDefaultApiPrefix( $apiPrefix )

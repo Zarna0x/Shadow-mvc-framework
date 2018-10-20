@@ -19,6 +19,16 @@ trait RouteValidatorTrait
         }
 	}
 
+	public static function validateRouteParams( $stringOrArray )
+	{
+        if ((!is_array($stringOrArray) && !is_string($stringOrArray)) || empty($stringOrArray) ) {
+          throw new  \ Shadowapp\Sys\Exceptions\WrongVariableTypeException("Wrong Variable Type. Variable should be array or string", 1);
+        }
+
+        
+
+	}
+
 	private static function validatePattern ( $pattern, $value )
 	{ 
 	   $cleanPattern = self::cleanPattern( $pattern );
