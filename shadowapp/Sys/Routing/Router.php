@@ -38,6 +38,11 @@ class Router implements RouterInterface
     protected static $defaultApiPrefix = 'api';
     protected static $customApiPrefixes = [];
     protected static $middlewares = [];
+
+    protected static $groupOptions = [
+      'started' => false
+    ];
+
     
 
     private static $counters = [
@@ -61,13 +66,12 @@ class Router implements RouterInterface
 
         if (is_string($method)) {
            $method = explode('@', $method);
-           $controllerAndMethodArray = ['controller','method'];
-
-           foreach ($controllerAndMethodArray as $key => $value) {
-             if (isset($method[$key])){
+           
+            foreach (['controller','method'] as $key => $value) {
+              if (isset($method[$key])){
                 $method[$value] = $method[$key];
                 unset($method[$key]);
-             }
+              }
            } 
         }
  
@@ -328,7 +332,9 @@ class Router implements RouterInterface
 
     public static function group( array $groupOptions, Closure $func )
     {
-       echo '<pre>'.print_R($groupOptions,1).'</pre>';  
+        
+       self::$groupOptions['started'] = true;
+
        call_user_func_array($func,['pk']);
     }
 

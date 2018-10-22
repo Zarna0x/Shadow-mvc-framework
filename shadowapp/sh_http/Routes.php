@@ -102,11 +102,11 @@ ShadowRouter::api('/ok',function  () {
 //-------------------------------------//
 
 ShadowRouter::group([
-// 'middleware' => 'auth.http',
-// 'apiPrefix'  => 'sxvaprefix'
+ 'middleware' => 'auth.http',
+ 'apiPrefix'  => 'sxvaprefix'
 ],function ($k) {
 
-  ShadowRouter::define('/modiaq','auth');
+  ShadowRouter::define('/modiaq','auth@ok');
 });
 
 
