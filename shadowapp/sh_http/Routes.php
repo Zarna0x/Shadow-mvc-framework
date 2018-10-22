@@ -89,7 +89,12 @@ ShadowRouter::withPrefix('sxva')->api('/wtf/{int:user}',[
 ShadowRouter::withMiddleware('http.test')->api('/users/{string:username}/create/{int:resourceid}',[
    'controller' => 'api',
    'method' => 'auth'
-],'get');
+],'get')->where(
+   [
+     'username' => '!= ok',
+     'resourceid' => '> 14'
+   ]
+);
 
 ShadowRouter::api('/ok',function  () {
   echo 'hmm';
@@ -108,8 +113,6 @@ ShadowRouter::group([
 
   ShadowRouter::define('/modiaq','auth@ok');
 });
-
-
 
 
 /////// 

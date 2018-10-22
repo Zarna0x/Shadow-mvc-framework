@@ -55,10 +55,25 @@ class Router implements RouterInterface
      */
     protected static $apiRoutes = [];
 
+    protected static $lastApiRoute;
+
     /*
      * Define routes and collect it to $_uri array
      * @param type $uri
      */
+
+    private function __construct ( $lastRoute = '' ) {
+       
+       if ( !empty($lastRoute) && is_string($lastRoute) ) {
+          self::$lastApiRoute = $lastRoute;
+       }
+    }
+
+
+   public function getLastApiRoute()
+   {
+      return self::$lastApiRoute;
+   }
 
     public static function define($uri, $method = null, $request_type = "get") {
         
@@ -87,7 +102,7 @@ class Router implements RouterInterface
             'middleware' => self::getMiddleware(),
             'action' => $method
         ];
-        return new static;
+        return new static($apiUri);
     }
 
     public static function withPrefix(string $prefix) {
@@ -399,6 +414,12 @@ class Router implements RouterInterface
         
          unset(self::$apiRoutes[self::$_currentRequstMethod][$endpointUri]);
 
+    }
+
+    public function where ( array $whereParams )
+    {
+       
+       //code here
     }
 
     private static function getApiUriWithoutPrefix ($apiUri) {
