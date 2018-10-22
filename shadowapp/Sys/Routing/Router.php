@@ -77,8 +77,6 @@ class Router implements RouterInterface
 
     public static function define($uri, $method = null, $request_type = "get") {
         
-        self::validateRouteParams($method);
-
         if (is_string($method)) {
            $method = explode('@', $method);
            
@@ -102,7 +100,7 @@ class Router implements RouterInterface
             'middleware' => self::getMiddleware(),
             'action' => $method
         ];
-        return new static($apiUri);
+        return new static(trim($apiUri, '/'));
     }
 
     public static function withPrefix(string $prefix) {
@@ -174,8 +172,8 @@ class Router implements RouterInterface
 
 
         if (false === array_key_exists($routedUri, self::$_routes[self::$_currentRequstMethod])) {
-         
-            if (false === self::isApiRouteConfirmed($uri)) {
+          
+           if (false === self::isApiRouteConfirmed($uri)) {
                 echo 'No Route for given uri';
                 exit;
             }
@@ -206,6 +204,7 @@ class Router implements RouterInterface
         $routedArg = ($appType == 'web') ?
                 shcol($routedUri, self::$_routes[self::$_currentRequstMethod]) :
                 shcol("{$routedUri}.action", self::$apiRoutes[self::$_currentRequstMethod]);
+
 
 
         /*
@@ -250,8 +249,13 @@ class Router implements RouterInterface
                     
                     $pApiArray = [];     
                     if ( $appType == 'api' ) {
-                       
+                        
+                       $apiRouteBase = shcol($routedUri,self::$apiRoutes[self::$_currentRequstMethod]);
+
+
                        $methodParams = shcol($routedUri.'.params', self::$apiRoutes[self::$_currentRequstMethod],[]);
+
+
 
                        
                                   
@@ -286,9 +290,11 @@ class Router implements RouterInterface
                         die;
                     }
                     
-                    
+
+
                     if (count($pApiArray) && $appType == 'api') {
-                      self::validate($pApiArray);
+                      $routeWhere = shcol('whereParams',$apiRouteBase,[]);
+                      self::validate($pApiArray,$routeWhere);
                     } 
 
                     $obj = new $controllerName;
@@ -419,7 +425,15 @@ class Router implements RouterInterface
     public function where ( array $whereParams )
     {
        
-       //code here
+       $lastApiRoute = self::getLastApiRoute();
+       
+       if ( empty($lastApiRoute) ) {
+          return ;
+       }
+      
+      self::$apiRoutes[self::$_currentRequstMethod][$lastApiRoute]['whereParams']  = $whereParams;
+   
+
     }
 
     private static function getApiUriWithoutPrefix ($apiUri) {

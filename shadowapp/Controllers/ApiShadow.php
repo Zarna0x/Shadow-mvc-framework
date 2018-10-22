@@ -12,7 +12,7 @@
 
  	public function auth ($username,$resourceId,$k = 'asd')
  	{
-     var_dump($username);
+       //var_dump($username); 
  	}
 
  	public function withMidleware()

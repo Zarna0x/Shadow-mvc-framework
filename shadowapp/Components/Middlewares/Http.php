@@ -13,7 +13,6 @@ class Http implements MiddlewareInterface
 
 	public static function test()
 	{
-		echo 'okkk';
-		exit;
+		//
 	}
 }

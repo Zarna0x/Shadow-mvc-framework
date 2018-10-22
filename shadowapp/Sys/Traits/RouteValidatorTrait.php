@@ -2,44 +2,55 @@
 
 namespace Shadowapp\Sys\Traits;
 
+use Shadowapp\Sys\Traits\Support\ComprasionTrait;
+
 trait RouteValidatorTrait
 {
+    use ComprasionTrait;
+
 	protected static $allowedTypes = [
       'int','string'
 	];
-	public static function validate( array $fields )
+
+	protected static $allowedOperators  = [
+         'moreThan'=>'>',
+         'lessThan'=>'<',
+         'equalTo'=>'=',
+         'notEqualTo'=>'!'
+    ];
+
+
+	public static function validate( array $fields , array $routeWhere )
 	{
+
 		if (empty( $fields )) {
             echo 'Params doesnot have to be empty';
             exit;
 		}
 
 		foreach ( $fields as $pattern => $value ) {
-			self::validatePattern($pattern,$value);
-        }
-	}
-
-	public static function validateRouteParams( $stringOrArray )
-	{
-        if ((!is_array($stringOrArray) && !is_string($stringOrArray)) || empty($stringOrArray) ) {
-          throw new  \ Shadowapp\Sys\Exceptions\WrongVariableTypeException("Wrong Variable Type. Variable should be array or string", 1);
+			self::validatePattern($pattern,$value,$routeWhere);
         }
 
-        
 
 	}
 
-	private static function validatePattern ( $pattern, $value )
+	private static function validatePattern ( $pattern, $value, $routeWhere )
 	{ 
 	   $cleanPattern = self::cleanPattern( $pattern );
 
 	   $patternArray = explode(':',$cleanPattern );
-       
+        
        if (count($patternArray) != 2 ) {
-           return ;
+           
+           if (!isset($routeWhere[$patternArray[0]])) return; 
+            
+           self::validateRouteParam(trim($routeWhere[$patternArray[0]]),$value, $patternArray[0]);
+       	   return ;
        }
 
        $patternType = $patternArray[0];
+
 
        if ( !in_array($patternType,self::$allowedTypes) ) {
          $message = $patternType. ' is not correct pattern type. allowed types are '.implode(', ', self::$allowedTypes);
@@ -62,17 +73,48 @@ trait RouteValidatorTrait
 
            	  throw new \Shadowapp\Sys\Exceptions\Routing\WrongUriParameterException($message);
            }
+          break;
+        }    
+       
+       if (!isset($routeWhere[$patternArray[1]])) return; 
+       self::validateRouteParam(trim($routeWhere[$patternArray[1]]),$value,$patternArray[1]);
 
-         break;
-
-         default:
-         return ;
-         break;
-       }    
-  
 	} 
 
-    
+   protected static function validateRouteParam ( $toValidate, $value, $variable ) 
+   {
+      $validationOperator = substr($toValidate, 0,1);
+
+      if (!in_array($validationOperator, self::$allowedOperators)) {
+          return;
+      }
+      
+      $toCheck = trim(substr($toValidate, 1));
+      
+      if (empty($toCheck)) return ; 
+      
+      $comprasionMethod = shcol($validationOperator,array_flip(self::$allowedOperators));
+      
+      if (false === self::$comprasionMethod($toCheck,$value)) {
+      	$correctComprasionString = self::splitAtUpperCase($comprasionMethod);
+      	$message = $variable . ' have to be '.$correctComprasionString.' '.$toCheck;
+      	
+        throw new \Shadowapp\Sys\Exceptions\Routing\WrongUriParameterException($message);
+      }
+   } 
+
+
+   private static function splitAtUpperCase($s) {
+        $splitted = preg_split('/(?=[A-Z])/', $s, -1, PREG_SPLIT_NO_EMPTY);
+        
+        if (!count($splitted)) return '';
+
+        $lowered = array_map(function ($k) {
+          return strtolower($k);
+        }, $splitted);
+
+        return implode(' ', $lowered);
+    }
 
 
 	protected static function containsBraces ( $endArr ) 

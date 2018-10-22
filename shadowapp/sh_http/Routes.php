@@ -2,6 +2,7 @@
 
 use Shadowapp\Sys\Routing\Router as ShadowRouter;
 
+
 /*
 * Define Routes Here
 */
@@ -86,13 +87,13 @@ ShadowRouter::withPrefix('sxva')->api('/wtf/{int:user}',[
    'method' => 'auth'
 ],'get');
 
-ShadowRouter::withMiddleware('http.test')->api('/users/{string:username}/create/{int:resourceid}',[
+ShadowRouter::withMiddleware('http.test')->api('/users/{string:username}/create/{resourceid}',[
    'controller' => 'api',
    'method' => 'auth'
 ],'get')->where(
    [
-     'username' => '!= ok',
-     'resourceid' => '> 14'
+     'username' => '!ok',
+     'resourceid' => '>14'
    ]
 );
 
