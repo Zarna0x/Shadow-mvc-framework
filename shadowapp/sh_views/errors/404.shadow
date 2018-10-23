@@ -42,7 +42,7 @@
   <div id="content-nf">
   	   
   	  	 <header>
-  	   	  <h1>Page Not found</h1>
+  	   	  <h1>^errorMessage^</h1>
   	   </header>
   	  	 <img src="https://cdn0.iconfinder.com/data/icons/simplie-essential-action/22/action_031-block-prevent-stop-restrict-512.png">
   	  

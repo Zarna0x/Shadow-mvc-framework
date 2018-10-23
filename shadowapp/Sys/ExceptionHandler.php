@@ -4,7 +4,9 @@ namespace Shadowapp\Sys;
 
 use Exception;
 
-abstract class ExceptionHandler
+use Shadowapp\Sys\Log\ExceptionHandlerInterface;
+
+abstract class ExceptionHandler implements ExceptionHandlerInterface
 {
 	/*
 	* @return Object \Exception
@@ -15,7 +17,7 @@ abstract class ExceptionHandler
       $dontReports = shcol('dontReport',get_class_vars(static::class),[]);
       
       if (in_array(get_class($exception),$dontReports)) {
-      	
+
           return;
       }
 

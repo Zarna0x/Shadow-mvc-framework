@@ -6,6 +6,6 @@ use Exception;
 
 Interface ExceptionHandlerInterface 
 {
-	public function report(Exception $exception);
-	public function render(Exception $exception);
+	public function report(Exception $exception) : bool;
+	public function render(Exception $exception) : bool;
 }
