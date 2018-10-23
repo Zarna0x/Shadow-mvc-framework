@@ -99,7 +99,7 @@ ShadowRouter::api('/ok',function  () {
 //   ShadowRouter::define('/modiaq','auth@ok');
 // });
 
-ShadowRouter::withMiddleware('http.test')->api('/users/{string:username}/create/{int:resourceid}',[
+ShadowRouter::api('/users/{string:username}/create/{int:resourceid}',[
    'controller' => 'api',
    'method' => 'auth'
 ],'get')->where([
@@ -107,6 +107,11 @@ ShadowRouter::withMiddleware('http.test')->api('/users/{string:username}/create/
   'resourceid' => '>14'
 ]);
 
+ShadowRouter::withPrefix('sfx')->api('/rap/{int:id}',[
+   'controller' => 'api'
+])->where([
+   'id' => '> 5'
+]);
 
 
 /////// 
@@ -115,4 +120,4 @@ ShadowRouter::withMiddleware('http.test')->api('/users/{string:username}/create/
 * Run Routes
 */
 ShadowRouter::run();
-?>
+?>s

@@ -13,6 +13,8 @@ class Http implements MiddlewareInterface
 
 	public static function test()
 	{
-		//
+		if (2>1) {
+          exit('Wrong');
+		}
 	}
 }

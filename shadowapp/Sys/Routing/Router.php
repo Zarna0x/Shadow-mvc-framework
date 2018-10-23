@@ -174,8 +174,8 @@ class Router implements RouterInterface
         if (false === array_key_exists($routedUri, self::$_routes[self::$_currentRequstMethod])) {
           
            if (false === self::isApiRouteConfirmed($uri)) {
-                echo 'No Route for given uri';
-                exit;
+               throw new \Shadowapp\Sys\Exceptions\Routing\RouteNotFoundException("No Route For give uri ", 1);
+                 
             }
 
             $from = 'api';
