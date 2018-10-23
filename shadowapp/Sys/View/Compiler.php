@@ -1,30 +1,42 @@
 <?php
 
 
-namespace Shadowapp\Components;
+namespace Shadowapp\Sys\View;
 
 
 /*
  * Shadow Template Engine Compiler
  */
-class TemplateCompiler
+class Compiler
 {
-  
+  /*
+  * @desc list of assigned values of view vars
+  * @array
+  */
   public $assignedValues = [];
+
+  /*
+  * @string
+  */
   public $template;
+
+  /*
+  * @string
+  */
   public $filename;
 
   public function __construct($filePath)
   {
-    if(file_exists($filePath))
-    {
-    	$this->template = file_get_contents($filePath);
-        $this->filename = $filePath;
     
-    }else
+    
+    if(!file_exists($filePath))
     {
-    	echo "File Does not Exists";
+        throw new \Shadowapp\Sys\Exceptions\View\ViewNotFoundException("View  does not exists", 1);
     }
+
+      $this->template = file_get_contents($filePath);
+      $this->filename = $filePath;
+    
   }
 
 
@@ -32,12 +44,10 @@ class TemplateCompiler
   {
   	
      if(!empty($setParams))
-     {
-     	
-         foreach($setParams as $key => $value) {
+     { 
+          foreach($setParams as $key => $value) {
              $this->assignedValues[$key] = $value;
          }
-         
      }
      
   }
@@ -46,12 +56,14 @@ class TemplateCompiler
 
   public function run()
   {
-  	 try 
+     try 
   	 {
-  	 	if(count($this->assignedValues) > 0) 
-  	{
+  	 	
+      if(count($this->assignedValues) > 0) 
+  	  {
+
        foreach ($this->assignedValues as $key => $value) { //value == array
-         	//var_dump($value);
+         	
          	switch ($value) {
          		case is_array($value):
                    
@@ -100,13 +112,11 @@ class TemplateCompiler
          	
        }
 
-                 /*
-                  * Set Rules 
-                  */
-        $this->template = $this->setRules($this->template);
-         //return;
-         $cacheDir = $viewPath     = dirname(dirname(__FILE__)).'/sh_cache';
-
+         /*
+          * Set Rules 
+          */
+         $this->template = $this->setRules($this->template);
+         $cacheDir = basePath().'sh_cache';
          $cache_file_name = md5($this->filename).".php";
          $cache_file = fopen($cacheDir.'/'.$cache_file_name,'w+');
   	     fwrite($cache_file,$this->template);

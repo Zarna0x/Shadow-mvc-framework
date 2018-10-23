@@ -1,23 +1,27 @@
 <?php
  namespace Shadowapp\Controllers;
 
- use Shadowapp\Sys\View as View;
+ use Shadowapp\Sys\View\View ;
    
   class ApiShadow
   {
   	public function __construct()
  	{
-           var_dump('kkkkkkkkkkk');
+     //      var_dump('kkkkkkkkkkk');
  	}
 
  	public function auth ($username,$resourceId,$k = 'asd')
  	{
-       //var_dump($username); 
+       View::run('contact/contact',[
+          'username' => $username,
+          'resourceId' => $resourceId
+       ]);
+
  	}
 
  	public function withMidleware()
  	{
-        var_dump(123);
+        
  	}
 
   }

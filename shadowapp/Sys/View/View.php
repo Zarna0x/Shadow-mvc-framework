@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Shadowapp\sys;
+namespace Shadowapp\Sys\View;
 
 
 Class View
@@ -16,25 +16,28 @@ Class View
 	public static function run($path,$params = null,$autoBootstrap = true)
 	{   
 		
-		$viewPath     = dirname(dirname(__FILE__)).'/sh_views';
+		$viewPath     = basePath().'sh_views';
+
        	$explodedPath = explode('/', $path);
 
+	
+                 
+         $filePath     = file_exists($viewPath.DS.shcol(0,$explodedPath).DS.shcol(1,$explodedPath).'.shadow')? $viewPath.DS.shcol(0,$explodedPath).DS.shcol(1,$explodedPath).'.shadow': null; 
+        
+        if (is_null( $filePath )) {
 
-
-        $filePath     = file_exists($viewPath."/".$explodedPath[0]."/".$explodedPath[1].".shadow")? $viewPath."/".$explodedPath[0]."/".$explodedPath[1].".shadow" : null; 
-	    
-      
-	   if($filePath != null)
-	   { 
+           throw new \Shadowapp\Sys\Exceptions\View\ViewNotFoundException("View  does not exists", 1);
+        }
 
 
 	     if($params != null)
 	     {
                extract($params);
-	           $templateCompiler = new \Shadowapp\Components\TemplateCompiler($filePath);
+	           $templateCompiler = new Compiler($filePath);
 	           
 	           $templateCompiler->assign($params);
-	          if ($autoBootstrap) {
+	       
+	       if ($autoBootstrap) {
 
 	          include_once $viewPath.'/index.shadow';
               include_once $templateCompiler->run();
@@ -52,11 +55,9 @@ Class View
               include_once $filePath;
              }
 	     }
-	   }else
-	   {
-	   	 echo 'View Doesnot Exists ...';
 	   }
 	}
-}
+
+
 
 ?>

@@ -24,15 +24,13 @@ trait RouteValidatorTrait
 	{
 
 		if (empty( $fields )) {
-            echo 'Params doesnot have to be empty';
+            echo 'Params do not have to be empty';
             exit;
 		}
 
 		foreach ( $fields as $pattern => $value ) {
 			self::validatePattern($pattern,$value,$routeWhere);
         }
-
-
 	}
 
 	private static function validatePattern ( $pattern, $value, $routeWhere )
@@ -104,8 +102,8 @@ trait RouteValidatorTrait
    } 
 
 
-   private static function splitAtUpperCase($s) {
-        $splitted = preg_split('/(?=[A-Z])/', $s, -1, PREG_SPLIT_NO_EMPTY);
+   private static function splitAtUpperCase( string $string ) {
+        $splitted = preg_split('/(?=[A-Z])/', $string, -1, PREG_SPLIT_NO_EMPTY);
         
         if (!count($splitted)) return '';
 
@@ -132,7 +130,6 @@ trait RouteValidatorTrait
        return $contains;
     }
 
-
 	protected static function stringContainsBraces ( $endp )
     {
        if (empty($endp)) {
@@ -153,6 +150,5 @@ trait RouteValidatorTrait
        }
 
        return substr($pattern, 1, strlen($pattern) - 2);
-
-	}
+    }
 }

@@ -7,10 +7,8 @@ use Shadowapp\Sys\Routing\Router as ShadowRouter;
 * Define Routes Here
 */
 
-
 /*
 Example:
-
 
 ShadowRouter::define('/home',[
    'controller' => 'index',
@@ -87,33 +85,28 @@ ShadowRouter::withPrefix('sxva')->api('/wtf/{int:user}',[
    'method' => 'auth'
 ],'get');
 
-ShadowRouter::withMiddleware('http.test')->api('/users/{string:username}/create/{resourceid}',[
-   'controller' => 'api',
-   'method' => 'auth'
-],'get')->where(
-   [
-     'username' => '!ok',
-     'resourceid' => '>14'
-   ]
-);
+
+
 
 ShadowRouter::api('/ok',function  () {
   echo 'hmm';
 });
 
-// ShadowRouter::endGroup();
+// ShadowRouter::group([
+//  'middleware' => 'auth.http',
+//  'apiPrefix'  => 'sxvaprefix'
+// ],function ($k) {
+//   ShadowRouter::define('/modiaq','auth@ok');
+// });
 
+ShadowRouter::withMiddleware('http.test')->api('/users/{string:username}/create/{int:resourceid}',[
+   'controller' => 'api',
+   'method' => 'auth'
+],'get')->where([
+  'username' => '!ok',
+  'resourceid' => '>14'
+]);
 
-
-//-------------------------------------//
-
-ShadowRouter::group([
- 'middleware' => 'auth.http',
- 'apiPrefix'  => 'sxvaprefix'
-],function ($k) {
-
-  ShadowRouter::define('/modiaq','auth@ok');
-});
 
 
 /////// 
@@ -122,6 +115,4 @@ ShadowRouter::group([
 * Run Routes
 */
 ShadowRouter::run();
-
-
 ?>
