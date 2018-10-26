@@ -10,6 +10,7 @@ namespace Shadowapp\Sys\Routing;
 
 use Closure;
 use Shadowapp\Sys\Http\Middleware;
+use Shadowapp\Sys\Http\Response;
 use Shadowapp\Sys\Traits\RouteValidatorTrait;
 
 class Router implements RouterInterface
@@ -62,7 +63,8 @@ class Router implements RouterInterface
      * @param type $uri
      */
 
-    private function __construct ( $lastRoute = '' ) {
+    private function __construct ( $lastRoute = '' ) 
+    {
        
        if ( !empty($lastRoute) && is_string($lastRoute) ) {
           self::$lastApiRoute = $lastRoute;
@@ -75,7 +77,8 @@ class Router implements RouterInterface
       return self::$lastApiRoute;
    }
 
-    public static function define($uri, $method = null, $request_type = "get") {
+    public static function define($uri, $method = null, $request_type = "get") 
+    {
         
         if (is_string($method)) {
            $method = explode('@', $method);
@@ -93,7 +96,8 @@ class Router implements RouterInterface
         self::$_currentRequstMethod = shcol("REQUEST_METHOD", $_SERVER);
     }
 
-    public static function api($apiUri, $method = null, $request_type = "get") {
+    public static function api($apiUri, $method = null, $request_type = "get") 
+    {
 
         self::$apiRoutes[strtoupper($request_type)][trim($apiUri, '/')] = [
             'apiPrefix' => self::getPrefix(),
@@ -103,7 +107,8 @@ class Router implements RouterInterface
         return new static(trim($apiUri, '/'));
     }
 
-    public static function withPrefix(string $prefix) {
+    public static function withPrefix(string $prefix) 
+    {
 
         if ($prefix != self::$defaultApiPrefix && !empty($prefix) && is_string($prefix)) {
             self::$customApiPrefixes[self::$counters['withPrefixCounter']] = $prefix;
@@ -112,7 +117,8 @@ class Router implements RouterInterface
     }
 
     public static function withMiddleware( string $middlewareMethod )
-    {
+    { 
+        
        if ((is_string( $middlewareMethod ) && !empty( $middlewareMethod )) && Middleware::exists($middlewareMethod)) {
              self::$middlewares[self::$counters['withMiddlewareCounter']] = $middlewareMethod;
        }

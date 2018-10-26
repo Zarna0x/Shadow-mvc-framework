@@ -29,6 +29,12 @@ Class Config
 
 	public function get()
 	{
+
+        if ( !file_exists( $this->_configData ) ) {
+        	$message = $this->_configData.' not found';
+           throw new \Shadowapp\Sys\Exceptions\ConfigurationFileNotFoundException($message);
+        }
+ 
 		return (object)parse_ini_file($this->_configData);
 	}
 

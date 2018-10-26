@@ -63,7 +63,7 @@ ShadowRouter::withMiddleware('auth.member')->define('/logout',[
 
 ShadowRouter::withMiddleware('http.test')->define('/withmid',[
   'controller' => 'api',
-  'method' => 'withMidleware'
+  'method' => 'withMiddleware'
 ]);
 
 ShadowRouter::withPrefix('idx')->api('/auth',function () {

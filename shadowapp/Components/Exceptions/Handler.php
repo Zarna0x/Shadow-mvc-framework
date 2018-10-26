@@ -22,6 +22,8 @@ class Handler extends ExceptionHandler
 
 	public function render (Exception $exception) : bool
 	{
+
+
        View::run('errors/404',[
            'errorMessage' => $exception->getMessage()
        ]);

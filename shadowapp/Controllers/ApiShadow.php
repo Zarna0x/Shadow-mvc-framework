@@ -23,7 +23,11 @@
 
  	public function withMiddleware()
  	{
-        echo 'ok';
+        View::run('contact/contact',[
+            'username' => [
+               'some','array'
+            ]
+        ]);
  	}
 
   }

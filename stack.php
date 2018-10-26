@@ -15,10 +15,14 @@ include_once 'defines.php';
 /*
 * Set Directories
 */
- try{  
+try {
+
  setDir('shadowapp/sh_http/');
+
 }catch (\Exception $Exception) {
-   (new Shadowapp\Components\Exceptions\Handler)->handle($Exception);
+ 
+  (new Shadowapp\Components\Exceptions\Handler)->handle($Exception);
+
 }
  
 

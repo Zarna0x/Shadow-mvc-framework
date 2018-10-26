@@ -1,7 +1,7 @@
 <?php
 namespace Shadowapp\Controllers;
 
-use Shadowapp\Sys\View as View;
+use Shadowapp\Sys\View\View as View;
 use Shadowapp\Sys\Http\Requester as Request;
 use Shadowapp\Sys\Validator;
 use Shadowapp\Sys\Session;
@@ -18,8 +18,6 @@ class AuthShadow
 
   public function __construct()
  	{
-
-    var_dump(123123123);
     
     $this->staffModel = new StaffModel;
     $this->email = new Email;

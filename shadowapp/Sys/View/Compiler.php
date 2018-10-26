@@ -9,6 +9,10 @@ namespace Shadowapp\Sys\View;
  */
 class Compiler
 {
+
+  private $allowedKeywords = [
+   'foreach(','endforeach','if(','endif'
+  ];
   /*
   * @desc list of assigned values of view vars
   * @array
@@ -111,7 +115,6 @@ class Compiler
 
          	
        }
-
          /*
           * Set Rules 
           */
@@ -136,17 +139,38 @@ class Compiler
   */
   protected function setRules($temp) 
   {
+    $wholeString = explode('@',$temp);
+
+    foreach ( $wholeString as $key => $maybeKeyword ) {
+      $contains = $this->stringContainsKeyword($maybeKeyword);
+      if ( shcol('allowed',$contains) != true ) continue;
       
-      
-        $statement    = $this->getStringBetween($temp,"@",'@');
-      
-        $temp = str_replace("@".$statement."@", "<?php ".$statement."; ?>", $temp);
+      $wholeString[$key] = ( shcol('isOpening',$contains) == true) 
+              ? "<?php ".$maybeKeyword.": ?>" 
+              :  "<?php ".$maybeKeyword."; ?>";
+    }
        
-       return $temp;
+   return implode(' ',$wholeString);
       
   }
 
+  protected function stringContainsKeyword ( $maybeString ) 
+  {
+     if ( !is_string( $maybeString ) || empty( $maybeString ) ) return ['allowed' => false];
+    
+     foreach ( $this->allowedKeywords as $keyword ) {
+        if (strpos($maybeString, $keyword) !== false) {
+            $isOpening = (substr($keyword, strlen($keyword) - 1) == '(') ? true : false;
+            return [
+              'allowed' => true,
+              'isOpening' => $isOpening 
+            ];
+        }
+     }
 
+     return ['allowed' => false];
+
+  }
 
   protected function ruleExists($rule)
   {
