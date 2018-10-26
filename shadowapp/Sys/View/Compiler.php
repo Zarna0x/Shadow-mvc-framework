@@ -44,16 +44,14 @@ class Compiler
   }
 
 
-  public function assign($setParams = [])
+  public function assign( array $setParams = [] )
   {
   	
-     if(!empty($setParams))
-     { 
-          foreach($setParams as $key => $value) {
-             $this->assignedValues[$key] = $value;
-         }
-     }
-     
+      if(empty($setParams)) return;
+       
+      foreach($setParams as $key => $value) {
+         $this->assignedValues[$key] = $value;
+      }
   }
 
 
@@ -62,14 +60,36 @@ class Compiler
   {
      try 
   	 {
-  	 	
-      if(count($this->assignedValues) > 0) 
-  	  {
+         /*
+          * Set Rules 
+          */
+         $this->parse()
+              ->compile();
+
+
+              var_dump($this->template);
+         die;
+         $cacheDir = basePath().'sh_cache';
+         $cache_file_name = md5($this->filename).".php";
+         $cache_file = fopen($cacheDir.'/'.$cache_file_name,'w+');
+  	     fwrite($cache_file,$this->template);
+  	     fclose($cache_file);
+
+  	     return $cacheDir.'/'.$cache_file_name;
+ 
+
+  	 }catch(Exception $e){
+        echo $e->getMessage();   
+  	 }
+  }
+
+  private function compile ()
+  {
 
        foreach ($this->assignedValues as $key => $value) { //value == array
-         	
-         	switch ($value) {
-         		case is_array($value):
+          
+          switch ($value) {
+            case is_array($value):
                    
                    /*
                     * check if array is mutlidimmensional
@@ -80,7 +100,7 @@ class Compiler
                           
                           foreach($s_val as $th_key => $th_val ) {
                           
-                          	$this->template = str_replace('^'.$key."[$s_key][$th_key]".'^',"<?php echo $".$key."['$s_key']['$th_key']"."; ?>",$this->template);
+                            $this->template = str_replace('^'.$key."[$s_key][$th_key]".'^',"<?php echo $".$key."['$s_key']['$th_key']"."; ?>",$this->template);
                             $multdim = true;
                           }   
                         }
@@ -91,55 +111,32 @@ class Compiler
                         
                        
                    }    
-         	
-         	break;
-
-         	case is_object($value):
-         		  
-         		  foreach($value as $sobj_key => $sobj_val ) {
+          
+          break;
+          case is_object($value):
+              
+              foreach($value as $sobj_key => $sobj_val ) {
                       
                       
                       $this->template = str_replace("^".$key.".$sobj_key"."^", "<?php echo $".$key."->$sobj_key; ?>", $this->template);
-         		  }
-
-         		break;
-
+              }
+            break;
             
-         		
-         		default:
-         			$this->template = str_replace('^'.$key.'^',"<?php echo $".$key."; ?>" ,$this->template);
-         	        
-         		break;
-         	}
+            
+            default:
+              $this->template = str_replace('^'.$key.'^',"<?php echo $".$key."; ?>" ,$this->template);
+                  
+            break;
+          }
 
-
-         	
-       }
-         /*
-          * Set Rules 
-          */
-         $this->template = $this->setRules($this->template);
-         $cacheDir = basePath().'sh_cache';
-         $cache_file_name = md5($this->filename).".php";
-         $cache_file = fopen($cacheDir.'/'.$cache_file_name,'w+');
-  	     fwrite($cache_file,$this->template);
-  	     fclose($cache_file);
-
-  	     return $cacheDir.'/'.$cache_file_name;
-  	} 
-
-  	 }catch(Exception $e){
-        echo $e->getMessage();   
-  	 }
+    
   }
+}
 
 
- /*
-  * Set Compilator Rules
-  */
-  protected function setRules($temp) 
+  protected function parse() 
   {
-    $wholeString = explode('@',$temp);
+    $wholeString = explode('@',$this->template);
 
     foreach ( $wholeString as $key => $maybeKeyword ) {
       $contains = $this->stringContainsKeyword($maybeKeyword);
@@ -150,8 +147,9 @@ class Compiler
               :  "<?php ".$maybeKeyword."; ?>";
     }
        
-   return implode(' ',$wholeString);
-      
+    $this->template =  implode(' ',$wholeString);
+    
+    return $this;      
   }
 
   protected function stringContainsKeyword ( $maybeString ) 

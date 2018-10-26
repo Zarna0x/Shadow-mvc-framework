@@ -24,8 +24,8 @@
  	public function withMiddleware()
  	{
         View::run('contact/contact',[
-            'username' => [
-               'some','array'
+            'username'=> [
+              'onr','two','wtsad','asd','asd','sss'
             ]
         ]);
  	}

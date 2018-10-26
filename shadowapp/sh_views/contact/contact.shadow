@@ -1,6 +1,9 @@
 <h1>Contact</h1>
 ^username^
 
-@foreach( $username as $user)@
+@ foreach( $username as $user )@
  ^user^
 @endforeach@
+
+
+
