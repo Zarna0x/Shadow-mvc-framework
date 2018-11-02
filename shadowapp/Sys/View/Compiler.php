@@ -15,7 +15,7 @@ class Compiler
   ];
   /*
   * @desc list of assigned values of view vars
-  * @array
+  * @array 
   */
   public $assignedValues = [];
 
@@ -63,12 +63,24 @@ class Compiler
          /*
           * Set Rules 
           */
-         $this->parse()
-              ->compile();
+         // $this->parse()
+         //      ->compile();
+     //   var_dump($this->template);
 
 
-              var_dump($this->template);
-         die;
+        $matchedVariables = [];
+        preg_match_all('/(?<=\^)([A-z|\w]+)?(?=\^)/i',$this->template,$matchedVariables);
+        
+
+
+         if (count(shcol(0,$matchedVariables))) {
+           $this->parseTemplateVariables(shcol(0,$matchedVariables));
+         }  
+
+
+
+    die;
+
          $cacheDir = basePath().'sh_cache';
          $cache_file_name = md5($this->filename).".php";
          $cache_file = fopen($cacheDir.'/'.$cache_file_name,'w+');
@@ -83,10 +95,56 @@ class Compiler
   	 }
   }
 
+ public function parseTemplateVariables ( array $variables ) 
+ {
+    if ( !count($this->assignedValues) || !count($variables) ) {
+       return ;
+    }
+
+    foreach ( $this->cleanVars( $variables ) as $variable ) {
+      if (!array_key_exists($variable, $this->assignedValues)) continue;
+
+      $this->parseVar( $variable );
+    }
+ }  
+
+
+protected function parseVar ( string $variable ) 
+{ 
+
+  var_dump($username);
+  switch ($this->assignedValues[$variable]) {
+     case is_string($this->assignedValues[$variable]):
+       $this->template = preg_replace('/\^username\^/', '<?php echo ; ?>', $this->template);
+       break;
+     
+     default:
+       # code...
+       break;
+   }
+
+//var_dump();
+   var_dump($this->template);
+}
+
+
+protected function cleanVars ( array $dirtyArray ) 
+{
+   return array_map(function ($vr) {
+     return ( strpos($vr, '[') !== false ) ?
+          substr($vr, 0, strpos($vr, '[')) :
+          $vr;
+     
+   }, $dirtyArray);
+
+
+}
+
+
+
   private function compile ()
   {
-
-       foreach ($this->assignedValues as $key => $value) { //value == array
+      foreach ($this->assignedValues as $key => $value) { //value == array
           
           switch ($value) {
             case is_array($value):
@@ -172,12 +230,8 @@ class Compiler
 
   protected function ruleExists($rule)
   {
-     if(strpos($this->template, $rule) != false)
-      {
-        return true;
-      }
-
-       return false;
+     return (strpos($this->template, $rule) != false)
+          ? true : false ;
   }
 
 

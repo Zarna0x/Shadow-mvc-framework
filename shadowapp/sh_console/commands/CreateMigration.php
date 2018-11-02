@@ -18,8 +18,9 @@ class CreateMigration extends Command
   {
     parent::__construct();
 
+
     $this->db = Connection::get();
-    
+
   }
    
    public function configure()

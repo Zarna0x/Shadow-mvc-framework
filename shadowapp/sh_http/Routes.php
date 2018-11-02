@@ -107,6 +107,12 @@ ShadowRouter::api('/users/{string:username}/create/{int:resourceid}',[
   'resourceid' => '>14'
 ]);
 
+ShadowRouter::define('/rgx',[
+  'controller' => 'regex',
+  'method' => 'makeRegex'
+]);
+
+
 ShadowRouter::withPrefix('sfx')->api('/rap/{int:id}',[
    'controller' => 'api'
 ])->where([

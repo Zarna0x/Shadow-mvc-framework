@@ -240,6 +240,9 @@ class Router implements RouterInterface
                 return;
             }
 
+
+
+
             /*
              * Check if Method Exists
              */
@@ -329,7 +332,6 @@ class Router implements RouterInterface
                     die;
                 }
             } else {
-
                 self::checkMiddleware($appType , $routedUri );
 
                 new $controllerName;
