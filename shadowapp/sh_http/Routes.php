@@ -23,10 +23,9 @@ ShadowRouter::define('/contact',function(){
 */
 
 
-ShadowRouter::define('/',[
-  'controller' => 'staff',
-  'method' => 'dashboard'
-]);
+ShadowRouter::define('/',function () {
+  echo 'kkk';
+})->name('neimi');
 
 // Auth Routes
 
@@ -41,15 +40,14 @@ ShadowRouter::define('/register',[
 ],'post');
 
 
-ShadowRouter::define('/login',[
-  'controller' => 'auth',
-  'method' => 'getLogin'
-]);
+ShadowRouter::withMiddleware('http.test')->define('/login',function () {
+  
+})->name('tslogin');
 
 ShadowRouter::define('/login',[
   'controller' => 'auth',
   'method' => 'login'
-],'post');
+],'post')->name('pstlogin');
 
 ShadowRouter::define('/confirm',[
    'controller' => 'auth',
@@ -78,6 +76,7 @@ ShadowRouter::setDefaultApiPrefix('api');
 
 // ShadowRouter::StartGroup(['middleware' => 'auth.http',
 // 'apiPrefix'  => 'sxvaprefix']);
+
 
 
 ShadowRouter::withPrefix('sxva')->api('/wtf/{int:user}',[

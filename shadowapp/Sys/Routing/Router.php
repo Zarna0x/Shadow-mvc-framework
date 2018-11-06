@@ -40,6 +40,13 @@ class Router implements RouterInterface
     protected static $customApiPrefixes = [];
     protected static $middlewares = [];
 
+
+    /*
+    * @var string 
+    */
+
+    protected static $lastWebRoute;
+
     protected static $groupOptions = [
       'started' => false
     ];
@@ -63,12 +70,17 @@ class Router implements RouterInterface
      * @param type $uri
      */
 
-    private function __construct ( $lastRoute = '' ) 
+    private function __construct ( $lastRoute = array() ) 
     {
-       
-       if ( !empty($lastRoute) && is_string($lastRoute) ) {
-          self::$lastApiRoute = $lastRoute;
+
+       if ( !empty($lastRoute['api']) && is_string($lastRoute['api']) ) {
+          self::$lastApiRoute = $lastRoute['api'];
        }
+        
+       if ( !empty($lastRoute['web']) && is_string($lastRoute['web']) ) {
+          self::$lastWebRoute = $lastRoute['web'];
+       }
+
     }
 
 
@@ -77,34 +89,48 @@ class Router implements RouterInterface
       return self::$lastApiRoute;
    }
 
+   public function getLastWebRoute()
+   {
+      return self::$lastWebRoute;
+   }
+
     public static function define($uri, $method = null, $request_type = "get") 
     {
-        
-        if (is_string($method)) {
-           $method = explode('@', $method);
-           
-            foreach (['controller','method'] as $key => $value) {
+      if (is_string($method)) {
+        $method = explode('@', $method);
+        foreach (['controller','method'] as $key => $value) {
               if (isset($method[$key])){
                 $method[$value] = $method[$key];
                 unset($method[$key]);
               }
            } 
         }
- 
-        self::$_routes[strtoupper($request_type)][trim($uri, '/')] = $method;
-        self::$_routes[strtoupper($request_type)][trim($uri, '/')]['middleware'] = self::getMiddleware();
-        self::$_currentRequstMethod = shcol("REQUEST_METHOD", $_SERVER);
+
+    self::$_routes[strtoupper($request_type)][trim($uri, '/')]['action'] = $method;
+
+
+    self::$_routes[strtoupper($request_type)][trim($uri, '/')]['middleware']= self::getMiddleware();
+    self::$_currentRequstMethod = shcol("REQUEST_METHOD", $_SERVER);
+
+     
+    
+    return ( trim($uri) == '/' ) ? 
+             new static([ 'web' => '/' ]):
+             new static ([
+              'web' => trim($uri,'/')
+             ]);
+    
     }
 
     public static function api($apiUri, $method = null, $request_type = "get") 
     {
-
         self::$apiRoutes[strtoupper($request_type)][trim($apiUri, '/')] = [
             'apiPrefix' => self::getPrefix(),
             'middleware' => self::getMiddleware(),
             'action' => $method
         ];
-        return new static(trim($apiUri, '/'));
+
+        return new static(['api' => $request_type.'.'.trim($apiUri, '/')]);
     }
 
     public static function withPrefix(string $prefix) 
@@ -141,8 +167,8 @@ class Router implements RouterInterface
         $currentMiddlewareCount = self::$counters['withMiddlewareCounter'];
         
         self::$counters['withMiddlewareCounter']++;
-
-       return shcol($currentMiddlewareCount, self::$middlewares, null);   
+        
+        return shcol($currentMiddlewareCount, self::$middlewares, null);   
     }
 
     /*
@@ -208,11 +234,11 @@ class Router implements RouterInterface
         }
 
         $routedArg = ($appType == 'web') ?
-                shcol($routedUri, self::$_routes[self::$_currentRequstMethod]) :
+                shcol("{$routedUri}.action", self::$_routes[self::$_currentRequstMethod]) :
                 shcol("{$routedUri}.action", self::$apiRoutes[self::$_currentRequstMethod]);
 
 
-
+        
         /*
          * Check Route::Define arguments
          */
@@ -224,9 +250,7 @@ class Router implements RouterInterface
                 exit;
             }
 
-
             $controllerName = "Shadowapp\\Controllers\\" . ucfirst($routedArg['controller']) . "Shadow";
-
 
             $methodName = isset($routedArg['method']) ? $routedArg['method'] : null;
 
@@ -427,21 +451,33 @@ class Router implements RouterInterface
          self::$apiRoutes[self::$_currentRequstMethod][$actualUri]['params'] = $params;
         
          unset(self::$apiRoutes[self::$_currentRequstMethod][$endpointUri]);
+    }
 
+    public function name ( string $nameOfRoute ) 
+    {
+        if(empty( $nameOfRoute ) ) {
+             return;
+        }
+
+       $lastRoute = self::getLastWebRoute() == '/' ? '' : self::getLastWebRoute();
+
+       self::$_routes[self::$_currentRequstMethod][$lastRoute]['routeName'] = trim($nameOfRoute);
+
+       return $this; 
     }
 
     public function where ( array $whereParams )
     {
        
        $lastApiRoute = self::getLastApiRoute();
-       
+
        if ( empty($lastApiRoute) ) {
           return ;
        }
       
       self::$apiRoutes[self::$_currentRequstMethod][$lastApiRoute]['whereParams']  = $whereParams;
    
-
+      return $this;
     }
 
     private static function getApiUriWithoutPrefix ($apiUri) {

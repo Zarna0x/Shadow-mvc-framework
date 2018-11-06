@@ -1,8 +1,6 @@
-<?php
-
+<?php 
 
 namespace Shadowapp\Sys\View;
-
 
 /*
  * Shadow Template Engine Compiler
@@ -33,7 +31,7 @@ class Compiler
   {
     
     
-    if(!file_exists($filePath))
+    if( !file_exists($filePath) )
     {
         throw new \Shadowapp\Sys\Exceptions\View\ViewNotFoundException("View  does not exists", 1);
     }

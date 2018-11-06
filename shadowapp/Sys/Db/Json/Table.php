@@ -56,14 +56,8 @@ class Table
           
         foreach ($this->_jsonContentList as $jKey => $jValue) {
              $this->_createQueries[$jKey] = $this->_renderTable($jKey,$jValue);
-             
-             
-		 }
-
-		 
-
+    		 }
 	}
-
 
 	public function execute($tableStr)
 	{
