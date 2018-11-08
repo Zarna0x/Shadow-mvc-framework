@@ -421,8 +421,13 @@ class Router implements RouterInterface
 
                    self::validate($pApiArray,$routeWhere);
                  } 
+
+
             } 
-            call_user_func($routedArg);
+             
+
+            $reflFunction = new \ReflectionFunction($routedArg);
+           // echo '<pre>'.print_R($reflFunction->getParameters(),1).'</pre>'; 
         }
         // Wrong Request method else
     }
