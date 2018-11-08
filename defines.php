@@ -80,3 +80,10 @@ if (!function_exists('basePath')) {
    }
 }
 
+if ( !function_exists('route') ) {
+   function route ( string $routeName , array $args = [] ) {
+      return \Shadowapp\Sys\Routing\Router::uri($routeName, $args);
+   }
+}
+
+

@@ -3,21 +3,27 @@
 
  use Shadowapp\Sys\View\View ;
  use Shadowapp\Sys\Http\Middleware;
-   
-  class ApiShadow
-  {
+ use Shadowapp\Sys\Routing\Router;
+
+class ApiShadow
+{
   	public function __construct()
- 	{
- 	  
- 	}
+ 	  {
+ 	     echo route('uscrete',[
+         'username' => 'Someone',
+         'resourceid' => 78
+       ]);
+ 	  }
+
+  public function kk ()
+  {
+    //route('tslogin');
+  }
 
  	public function auth ($username,$resourceId,$k = 'asd')
  	{
-
-       View::run('contact/contact',[
-          'username' => $username,
-          'resourceId' => $resourceId
-       ]);
+   // echo 'asd';
+   // var_dump($username,$resourceId);
 
  	}
 
@@ -29,4 +35,3 @@
  	}
 
   }
-?>

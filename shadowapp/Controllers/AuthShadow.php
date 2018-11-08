@@ -18,7 +18,6 @@ class AuthShadow
 
   public function __construct()
  	{
-    
     $this->staffModel = new StaffModel;
     $this->email = new Email;
  	}

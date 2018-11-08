@@ -23,9 +23,10 @@ ShadowRouter::define('/contact',function(){
 */
 
 
-ShadowRouter::define('/',function () {
-  echo 'kkk';
-})->name('neimi');
+ShadowRouter::withMiddleware('http.test')->define('/',[
+ 'controller' => 'api',
+ 'method' => 'kk'
+])->name('neimi');
 
 // Auth Routes
 
@@ -41,7 +42,7 @@ ShadowRouter::define('/register',[
 
 
 ShadowRouter::withMiddleware('http.test')->define('/login',function () {
-  
+  echo 'aaaaaa';
 })->name('tslogin');
 
 ShadowRouter::define('/login',[
@@ -74,8 +75,8 @@ ShadowRouter::withPrefix('idx')->api('/auth',function () {
 ShadowRouter::setDefaultApiPrefix('api');
 
 
-// ShadowRouter::StartGroup(['middleware' => 'auth.http',
-// 'apiPrefix'  => 'sxvaprefix']);
+#ShadowRouter::StartGroup(['middleware' => 'auth.http',
+//'apiPrefix'  => 'sxvaprefix']);
 
 
 
@@ -91,32 +92,32 @@ ShadowRouter::api('/ok',function  () {
   echo 'hmm';
 });
 
-// ShadowRouter::group([
-//  'middleware' => 'auth.http',
-//  'apiPrefix'  => 'sxvaprefix'
-// ],function ($k) {
-//   ShadowRouter::define('/modiaq','auth@ok');
-// });
+ShadowRouter::group([
+ 'middleware' => 'auth.http',
+ 'apiPrefix'  => 'sxvaprefix'
+],function ($k) {
+  ShadowRouter::define('/modiaq','auth@ok');
+});
 
-ShadowRouter::api('/users/{string:username}/create/{int:resourceid}',[
+ShadowRouter::withPrefix('idx')->withMiddleware('http.test')->api('/users/{string:username}/create/{int:resourceid}',[
    'controller' => 'api',
    'method' => 'auth'
 ],'get')->where([
   'username' => '!ok',
   'resourceid' => '>14'
-]);
+])->name('uscrete');
 
-ShadowRouter::define('/rgx',[
-  'controller' => 'regex',
-  'method' => 'makeRegex'
-]);
+// ShadowRouter::define('/rgx',[
+//   'controller' => 'regex',
+//   'method' => 'makeRegex'
+// ]);
 
 
-ShadowRouter::withPrefix('sfx')->api('/rap/{int:id}',[
-   'controller' => 'api'
-])->where([
-   'id' => '> 5'
-]);
+// ShadowRouter::withPrefix('sfx')->api('/rap/{int:id}',[
+//    'controller' => 'api'
+// ])->where([
+//    'id' => '> 5'
+// ]);
 
 
 /////// 
@@ -125,4 +126,4 @@ ShadowRouter::withPrefix('sfx')->api('/rap/{int:id}',[
 * Run Routes
 */
 ShadowRouter::run();
-?>s
+?>
