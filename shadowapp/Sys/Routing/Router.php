@@ -20,12 +20,11 @@ class Router implements RouterInterface
     /*
      * @var array
      */
-
     protected static $_routes;
 
 
     /*
-    * @var aray
+    * @var array
     */
 
     protected static $nameCollection = [];
@@ -81,7 +80,6 @@ class Router implements RouterInterface
 
     private function __construct ( $lastRoute = array() ) 
     {
-
        if ( !empty($lastRoute['api']) && is_string($lastRoute['api']['uri']) ) {
           self::$lastApiRoute = $lastRoute['api'];
        }
@@ -93,7 +91,6 @@ class Router implements RouterInterface
        if ( ! is_null(key($lastRoute))) {
            self::$lastRouteIsFrom  = key( $lastRoute );
        }
-
     }
 
    public function getLastApiRoute()
@@ -198,9 +195,8 @@ class Router implements RouterInterface
             return false;
         }
         
-        
         $base = self::$nameCollection[$routeName]['endpoint'];
-        
+
         $uriInfo = preg_replace_callback('/{(.*?)\}/i',function ($res) use ($args) {
               $result = explode(':', shcol(1,$res));
 
@@ -217,7 +213,7 @@ class Router implements RouterInterface
         if (!empty($base['prefix'])) {
            $uriInfo = $base['prefix'].DS.$uriInfo;
         }
-       
+
         return baseurl().DS.$uriInfo;
     }
 
@@ -336,15 +332,13 @@ class Router implements RouterInterface
 
                        $methodParams = shcol($routedUri.'.params', self::$apiRoutes[self::$_currentRequstMethod],[]);
 
-
-
                        
                                   
-                       $expUri = explode('/',$uri);
-                       foreach ( $methodParams as $key => $methValue) {
 
-                            $pApiArray[$methValue] =  $expUri[$key];
-                       } 
+                       $pApiArray = self::generateApiArr(explode('/', $uri),  $methodParams);
+                       
+
+                       
 
                     }
                     
@@ -415,10 +409,33 @@ class Router implements RouterInterface
         /*
          * If Argument Is Function
          */ else {
+      
             self::checkMiddleware($appType , $routedUri );
+            $pApiArray = [];
+            if ($appType == 'api') {
+              $methodParams = shcol($routedUri.'.params', self::$apiRoutes[self::$_currentRequstMethod],[]);
+                $pApiArray = self::generateApiArr(explode('/', $uri),  $methodParams);     
+
+                if (count($pApiArray)) {
+                 $routeWhere = shcol($routedUri.'.whereParams',self::$apiRoutes[self::$_currentRequstMethod],[]);
+
+                   self::validate($pApiArray,$routeWhere);
+                 } 
+            } 
             call_user_func($routedArg);
         }
         // Wrong Request method else
+    }
+
+    private static function generateApiArr ( $expUri, $methodParams ) 
+    {
+        $pApiArray = [];
+        foreach ( $methodParams as $key => $methValue) {
+
+                            $pApiArray[$methValue] =  $expUri[$key];
+        }
+
+        return $pApiArray; 
     }
 
     protected static function checkMiddleware ($appType , $routedUri ) 
@@ -546,8 +563,6 @@ class Router implements RouterInterface
                     }, ARRAY_FILTER_USE_BOTH));
     }
 
-
-    
     
     public static function setDefaultApiPrefix( $apiPrefix )
     {

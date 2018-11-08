@@ -99,10 +99,9 @@ ShadowRouter::group([
   ShadowRouter::define('/modiaq','auth@ok');
 });
 
-ShadowRouter::withPrefix('idx')->withMiddleware('http.test')->api('/users/{string:username}/create/{int:resourceid}',[
-   'controller' => 'api',
-   'method' => 'auth'
-],'get')->where([
+ShadowRouter::withPrefix('idx')->withMiddleware('http.test')->api('/users/{string:username}/create/{int:resourceid}',function () {
+  echo 'kkk';
+},'get')->where([
   'username' => '!ok',
   'resourceid' => '>14'
 ])->name('uscrete');
