@@ -411,7 +411,11 @@ class Router implements RouterInterface
          */ else {
       
             self::checkMiddleware($appType , $routedUri );
+            
             $pApiArray = [];
+            
+            $routeParams = [];
+
             if ($appType == 'api') {
               $methodParams = shcol($routedUri.'.params', self::$apiRoutes[self::$_currentRequstMethod],[]);
                 $pApiArray = self::generateApiArr(explode('/', $uri),  $methodParams);     
@@ -422,14 +426,73 @@ class Router implements RouterInterface
                    self::validate($pApiArray,$routeWhere);
                  } 
 
-
+                 
+                  
+                 if ( count( $methodParams ) ) {
+                    $routeParams = self::getRouteParams($uri,$methodParams);
+                 } 
             } 
-             
+          
+            $ReflectionFunction = new \ReflectionFunction($routedArg);
+            
+            $paramCount = count($ReflectionFunction->getParameters());
+            
+            $ps = [];
+            
 
-            $reflFunction = new \ReflectionFunction($routedArg);
-           // echo '<pre>'.print_R($reflFunction->getParameters(),1).'</pre>'; 
+            foreach ( $ReflectionFunction->getParameters() as $param ) {
+                 if ( array_key_exists($param->getName(), $routeParams) )  {
+                      $ps[] = $routeParams[$param->getName()];
+                 }
+            }
+
+            
+
+            try {
+
+             $ReflectionFunction->invokeArgs($ps);
+           
+            } catch (\ArgumentCountError $e) {
+              exit($e->getMessage());
+            }
         }
         // Wrong Request method else
+    }
+
+
+    private static function getRouteParams ( string $uri , array $params  ) 
+    {
+       if ( empty( $params ) ) {
+           return false;
+       }
+         
+        $expPath = explode('/', $uri); 
+ 
+        $newParamsArray = explode(' ',preg_replace_callback('/{(.*?)\}/i', function( $match )  {
+            
+            
+              $result = explode(':', shcol(1,$match));
+
+               if (count($result) == 1) {
+                 return $result[0];
+               } 
+
+              if (count($result) == 2 ) {
+                 return $result[1];
+              }
+
+        
+        },implode(' ', $params)));
+        
+        $result = [];
+        $keys = array_keys($params);
+
+        foreach ($newParamsArray as $k) {
+            $result[$k] = $expPath[current($keys)];
+            next($keys);
+        }
+
+        return $result;
     }
 
     private static function generateApiArr ( $expUri, $methodParams ) 

@@ -99,8 +99,8 @@ ShadowRouter::group([
   ShadowRouter::define('/modiaq','auth@ok');
 });
 
-ShadowRouter::withPrefix('idx')->withMiddleware('http.test')->api('/users/{string:username}/create/{int:resourceid}',function ($username,$resourceid) {
-  var_dump($username,$resourceid);
+ShadowRouter::withPrefix('idx')->withMiddleware('http.test')->api('/users/{string:username}/create/{resourceid}',function ($resourceid,$username) {
+  var_dump($username,$resourceid); 
 },'get')->where([
   'username' => '!ok',
   'resourceid' => '>14'
