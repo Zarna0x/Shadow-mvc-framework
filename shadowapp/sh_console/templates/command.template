@@ -1,0 +1,14 @@
+<?php
+
+namespace Shadowapp\Components\Commanding\Commands;
+
+use Shadowapp\Sys\Commanding\Interfaces\CommandInterface;
+
+class __COMMAND__ implements CommandInterface
+{
+    public function __construct()
+    {
+       
+    }
+}
+

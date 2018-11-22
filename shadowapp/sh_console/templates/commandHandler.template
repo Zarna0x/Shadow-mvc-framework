@@ -11,16 +11,11 @@ namespace Shadowapp\Components\Commanding\CommandHandlers;
 use Shadowapp\Sys\Commanding\Interfaces\CommandInterface;
 use Shadowapp\Sys\Commanding\Interfaces\CommandHandlerInterface;
 
-class CreateNewInvoiceHandler implements CommandHandlerInterface
+class __COMMANDHANDLER__ implements CommandHandlerInterface
 {
     public function handle(CommandInterface $command )
     {
-        // handle some data
-        
-        Event::raise();
-        Event::fire();
-        Event::fireRaisedEvents();
-        Event::fireFromRaised();
+       
         
     }
 }

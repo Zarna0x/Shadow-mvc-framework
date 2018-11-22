@@ -9,7 +9,7 @@
 namespace Shadowapp\Components\Events;
 
 
-class EmailWasSent
+class InvoiceWasCreated
 {
     //put your code here
 }
