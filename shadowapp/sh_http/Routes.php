@@ -88,9 +88,10 @@ ShadowRouter::withPrefix('sxva')->api('/wtf/{int:user}',[
 
 
 
-ShadowRouter::api('/ok',function  () {
-  echo 'hmm';
-});
+ShadowRouter::define('/ok',[
+ 'controller'=> 'api',
+ 'method' => 'kk'
+]);
 
 ShadowRouter::group([
  'middleware' => 'auth.http',

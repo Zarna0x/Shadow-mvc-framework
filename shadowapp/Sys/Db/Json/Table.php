@@ -85,6 +85,7 @@ class Table
         $pkStr = '';
 
         foreach ($tableData as $column => $attrs) {
+            
             if ($column == 'indexes') {
 
                $syscfg = $this->_renderCfgData($attrs);
@@ -106,13 +107,16 @@ class Table
        if (!empty($pkStr)) {
           $realTableQuery .= ', '.$pkStr;
        }
+
        $realQuery = $query.$realTableQuery.')';
+      
        if (!empty($syscfg)){
           $realQuery .= ' '.$syscfg.' ;';
        }else {
        	  $realQuery .= ' ;';
        }
-        return $realQuery;
+
+       return $realQuery;
        
 	}
 
@@ -121,6 +125,7 @@ class Table
         $this->_otherValues = array_change_key_case(array_merge($this->_otherValues,(array)$cfgData),CASE_UPPER);
         
         $engineStr = '';
+        
         if (!empty(shcol('ENGINE',$this->_otherValues))) {
             $engineStr = "ENGINE = ".shcol('ENGINE',$this->_otherValues);
 
@@ -148,8 +153,9 @@ class Table
 	protected function _generateQueryAttrs($attributes)
 	{
 	   $queryStack = [];
-	   $queryStack['type'] = shcol('type',$attributes);
-	   if (!empty($queryStack['type'])) {
+     $queryStack['type'] = shcol('type',$attributes);
+	   
+     if (!empty($queryStack['type'])) {
 	     $queryStack['length'] = (!empty(shcol('length',$attributes))) ? '('.shcol('length',$attributes).')' : '';
 	   }
 	   
@@ -157,12 +163,15 @@ class Table
              $queryStack['auto_increment'] = 'AUTO_INCREMENT';
              $this->_otherValues['auto_increment'] = shcol('auto_increment',$attributes);
        }
+
 	   $queryStack['null'] = (shcol('null',$attributes) == 'true') ? 'DEFAULT NULL' : 'NOT NULL' ;
-	   if ($queryStack['null'] != 'DEFAULT NULL') {
+	   
+     if ($queryStack['null'] != 'DEFAULT NULL') {
            $queryStack['default'] = (!empty(shcol('default',$attributes))) ? 'DEFAULT "'.shcol('default',$attributes).'"' : '';
 	   }
        
        $implodedQuery = trim(implode(' ', $queryStack));
+       
        return $implodedQuery;
 	   
 	}
@@ -170,8 +179,8 @@ class Table
 	public function getQueryString($tableStr)
 	{
     if (array_key_exists($tableStr, $this->_createQueries)) {
-              echo $this->_createQueries[$tableStr];
-	     }
+         echo $this->_createQueries[$tableStr];
+	   }
 
 	}
 }

@@ -15,18 +15,19 @@ use Shadowapp\Sys\Traits\RouteValidatorTrait;
 
 class Router implements RouterInterface
 {
+
     use RouteValidatorTrait;
 
     /*
      * @var array
      */
+
     protected static $_routes;
 
 
     /*
-    * @var array
-    */
-
+     * @var array
+     */
     protected static $nameCollection = [];
 
     /*
@@ -48,29 +49,22 @@ class Router implements RouterInterface
 
 
     /*
-    * @var string 
-    */
-
+     * @var string 
+     */
     protected static $lastWebRoute;
-
     protected static $groupOptions = [
-      'started' => false
+        'started' => false
     ];
-
-    
-
     private static $counters = [
-      'withPrefixCounter'     => 0,
-      'withMiddlewareCounter' => 0
+        'withPrefixCounter' => 0,
+        'withMiddlewareCounter' => 0
     ];
-    
+
     /*
      * @var array
      */
     protected static $apiRoutes = [];
-
     protected static $lastApiRoute;
-
     protected static $lastRouteIsFrom;
 
     /*
@@ -78,60 +72,59 @@ class Router implements RouterInterface
      * @param type $uri
      */
 
-    private function __construct ( $lastRoute = array() ) 
+    private function __construct($lastRoute = array())
     {
-       if ( !empty($lastRoute['api']) && is_string($lastRoute['api']['uri']) ) {
-          self::$lastApiRoute = $lastRoute['api'];
-       }
-        
-       if ( !empty($lastRoute['web']) && is_string($lastRoute['web']['uri']) ) {
-          self::$lastWebRoute = $lastRoute['web'];
-       }
-
-       if ( ! is_null(key($lastRoute))) {
-           self::$lastRouteIsFrom  = key( $lastRoute );
-       }
-    }
-
-   public function getLastApiRoute()
-   {
-      return self::$lastApiRoute;
-   }
-
-   public function getLastWebRoute()
-   {
-      return self::$lastWebRoute;
-   }
-
-    public static function define($uri, $method = null, $request_type = "get") 
-    {
-      if (is_string($method)) {
-        $method = explode('@', $method);
-        foreach (['controller','method'] as $key => $value) {
-              if (isset($method[$key])){
-                $method[$value] = $method[$key];
-                unset($method[$key]);
-              }
-           } 
+        if (!empty($lastRoute['api']) && is_string($lastRoute['api']['uri'])) {
+            self::$lastApiRoute = $lastRoute['api'];
         }
 
-    self::$_routes[strtoupper($request_type)][trim($uri, '/')]['action'] = $method;
-    self::$_routes[strtoupper($request_type)][trim($uri, '/')]['middleware']= self::getMiddleware();
-    self::$_currentRequstMethod = shcol("REQUEST_METHOD", $_SERVER);
+        if (!empty($lastRoute['web']) && is_string($lastRoute['web']['uri'])) {
+            self::$lastWebRoute = $lastRoute['web'];
+        }
 
-     
-    $url = ( trim($uri) == '/' ) ? '/' : trim($uri,'/');
-
-    return new static ([
-      'web' => [
-        'method' => $request_type,
-        'uri' => $url
-    ]]);
-    
+        if (!is_null(key($lastRoute))) {
+            self::$lastRouteIsFrom = key($lastRoute);
+        }
     }
 
-    public static function api($apiUri, $method = null, $request_type = "get") 
-    {   
+    public function getLastApiRoute()
+    {
+        return self::$lastApiRoute;
+    }
+
+    public function getLastWebRoute()
+    {
+        return self::$lastWebRoute;
+    }
+
+    public static function define($uri, $method = null, $request_type = "get")
+    {
+        if (is_string($method)) {
+            $method = explode('@', $method);
+            foreach (['controller', 'method'] as $key => $value) {
+                if (isset($method[$key])) {
+                    $method[$value] = $method[$key];
+                    unset($method[$key]);
+                }
+            }
+        }
+
+        self::$_routes[strtoupper($request_type)][trim($uri, '/')]['action'] = $method;
+        self::$_routes[strtoupper($request_type)][trim($uri, '/')]['middleware'] = self::getMiddleware();
+        self::$_currentRequstMethod = shcol("REQUEST_METHOD", $_SERVER);
+
+
+        $url = ( trim($uri) == '/' ) ? '/' : trim($uri, '/');
+
+        return new static([
+            'web' => [
+                'method' => $request_type,
+                'uri' => $url
+        ]]);
+    }
+
+    public static function api($apiUri, $method = null, $request_type = "get")
+    {
 
         $prefix = self::getPrefix();
         self::$apiRoutes[strtoupper($request_type)][trim($apiUri, '/')] = [
@@ -143,13 +136,13 @@ class Router implements RouterInterface
         self::$_currentRequstMethod = shcol("REQUEST_METHOD", $_SERVER);
 
         return new static(['api' => [
-           'uri' =>  trim($apiUri, '/'),
-           'method' => $request_type,
-           'prefix' => $prefix
+                'uri' => trim($apiUri, '/'),
+                'method' => $request_type,
+                'prefix' => $prefix
         ]]);
     }
 
-    public static function withPrefix(string $prefix) 
+    public static function withPrefix(string $prefix)
     {
 
         if ($prefix != self::$defaultApiPrefix && !empty($prefix) && is_string($prefix)) {
@@ -158,75 +151,73 @@ class Router implements RouterInterface
         return new static;
     }
 
-    public static function withMiddleware( string $middlewareMethod )
-    { 
-        
-       if ((is_string( $middlewareMethod ) && !empty( $middlewareMethod )) && Middleware::exists($middlewareMethod)) {
-             self::$middlewares[self::$counters['withMiddlewareCounter']] = $middlewareMethod;
-       }
+    public static function withMiddleware(string $middlewareMethod)
+    {
 
-      return new static;
+        if ((is_string($middlewareMethod) && !empty($middlewareMethod)) && Middleware::exists($middlewareMethod)) {
+            self::$middlewares[self::$counters['withMiddlewareCounter']] = $middlewareMethod;
+        }
+
+        return new static;
     }
 
-    protected static function getPrefix() {
+    protected static function getPrefix()
+    {
 
         $currentPrefixCount = self::$counters['withPrefixCounter'];
 
-        self::$counters['withPrefixCounter']++;
+        self::$counters['withPrefixCounter'] ++;
 
         return shcol($currentPrefixCount, self::$customApiPrefixes, self::$defaultApiPrefix);
     }
 
-
     protected static function getMiddleware()
     {
         $currentMiddlewareCount = self::$counters['withMiddlewareCounter'];
-        
-        self::$counters['withMiddlewareCounter']++;
-        
-        return shcol($currentMiddlewareCount, self::$middlewares, null);   
+
+        self::$counters['withMiddlewareCounter'] ++;
+
+        return shcol($currentMiddlewareCount, self::$middlewares, null);
     }
 
-
-
-    public static function uri( string $routeName, array $args = [] )
+    public static function uri(string $routeName, array $args = [])
     {
-        if ( ! array_key_exists(trim($routeName), self::$nameCollection) ) {
+        if (!array_key_exists(trim($routeName), self::$nameCollection)) {
             return false;
         }
-        
+
         $base = self::$nameCollection[$routeName]['endpoint'];
 
-        $uriInfo = preg_replace_callback('/{(.*?)\}/i',function ($res) use ($args) {
-              $result = explode(':', shcol(1,$res));
+        $uriInfo = preg_replace_callback('/{(.*?)\}/i', function ($res) use ($args) {
+            $result = explode(':', shcol(1, $res));
 
-              if (count($result) == 1 && array_key_exists($result[0], $args)) {
-                  return $args[$result[0]];
-              } 
+            if (count($result) == 1 && array_key_exists($result[0], $args)) {
+                return $args[$result[0]];
+            }
 
-              if (count($result) == 2 && array_key_exists($result[1], $args)) {
+            if (count($result) == 2 && array_key_exists($result[1], $args)) {
                 return $args[$result[1]];
-              }
-
-        },$base['uri']);
+            }
+        }, $base['uri']);
 
         if (!empty($base['prefix'])) {
-           $uriInfo = $base['prefix'].DS.$uriInfo;
+            $uriInfo = $base['prefix'] . DS . $uriInfo;
         }
 
-        return baseurl().DS.$uriInfo;
+        return baseurl() . DS . $uriInfo;
     }
 
     /*
      * Run Routes
      */
 
-    public static function run() {
+    public static function run()
+    {
 
         /*
          * Parse Uri
          */
-        
+
         $uri = isset($_GET['uri']) ? trim(strip_tags($_GET['uri'])) : '';
         $uriArr = explode('/', $uri);
 
@@ -246,23 +237,24 @@ class Router implements RouterInterface
         $routedUri = trim(shcol(0, explode('/', $uri)));
 
         $from = 'web';
-        
 
 
-        if (false === shcol(self::$_currentRequstMethod.".".$routedUri, self::$_routes,false)) {
-           
-           if (false === self::isApiRouteConfirmed($uri)) {
-               throw new \Shadowapp\Sys\Exceptions\Routing\RouteNotFoundException("No Route For give uri ", 1);
+
+        if (false === shcol(self::$_currentRequstMethod . "." . $routedUri, self::$_routes, false)) {
+
+            if (false === self::isApiRouteConfirmed($uri)) {
+                throw new \Shadowapp\Sys\Exceptions\Routing\RouteNotFoundException("No Route For give uri ", 1);
             }
 
             $from = 'api';
         }
 
-        
+
         self::exec($routedUri, $uri, $from);
     }
 
-    private static function exec($routedUri, $uri, $appType) {
+    private static function exec($routedUri, $uri, $appType)
+    {
         if (!in_array($appType, ['web', 'api'])) {
             echo 'Wrong Application type';
             exit;
@@ -282,7 +274,7 @@ class Router implements RouterInterface
                 shcol("{$routedUri}.action", self::$_routes[self::$_currentRequstMethod]) :
                 shcol("{$routedUri}.action", self::$apiRoutes[self::$_currentRequstMethod]);
 
-       
+
         /*
          * Check Route::Define arguments
          */
@@ -318,32 +310,28 @@ class Router implements RouterInterface
             if (isset($routedArg['method'])) {
 
                 if (method_exists($controllerName, $methodName)) {
-                  
+
                     $paramString = trim(substr($uri, strlen($routedUri)), '/');
                     $paramArray = explode('/', $paramString);
                     $paramCount = (empty($paramString)) ? 0 : count($paramArray);
-       
-                    
-                    $pApiArray = [];     
-                    if ( $appType == 'api' ) {
-                        
-                       $apiRouteBase = shcol($routedUri,self::$apiRoutes[self::$_currentRequstMethod]);
 
 
-                       $methodParams = shcol($routedUri.'.params', self::$apiRoutes[self::$_currentRequstMethod],[]);
+                    $pApiArray = [];
+                    if ($appType == 'api') {
 
-                       
-                                  
+                        $apiRouteBase = shcol($routedUri, self::$apiRoutes[self::$_currentRequstMethod]);
 
-                       $pApiArray = self::generateApiArr(explode('/', $uri),  $methodParams);
-                       
 
-                       
+                        $methodParams = shcol($routedUri . '.params', self::$apiRoutes[self::$_currentRequstMethod], []);
 
+
+
+
+                        $pApiArray = self::generateApiArr(explode('/', $uri), $methodParams);
                     }
-                    
-                   
-                    self::checkMiddleware($appType , $routedUri );
+
+
+                    self::checkMiddleware($appType, $routedUri);
 
                     $reflectionMethod = new \ReflectionMethod($controllerName, $methodName);
 
@@ -359,48 +347,46 @@ class Router implements RouterInterface
                     // Get All Available params
                     $numOfArgs = count($reflectionMethod->getParameters()) - $optArgCount;
 
-                    
-                     if ($paramCount < $numOfArgs && $appType == 'web') {
+
+                    if ($paramCount < $numOfArgs && $appType == 'web') {
                         echo 'Wrong Param count!';
                         die;
                     }
-                    
+
 
 
                     if (count($pApiArray) && $appType == 'api') {
-                      $routeWhere = shcol('whereParams',$apiRouteBase,[]);
+                        $routeWhere = shcol('whereParams', $apiRouteBase, []);
 
-                    
-                      self::validate($pApiArray,$routeWhere);
-                    } 
+
+                        self::validate($pApiArray, $routeWhere);
+                    }
 
                     $obj = new $controllerName;
 
-                    
+
                     if ($appType == 'web') {
-                        (empty($paramCount))?
-                          $reflectionMethod->invoke($obj):
-                          call_user_func_array([
-                            $obj, $methodName
-                                ], $paramArray);
+                        (empty($paramCount)) ?
+                                        $reflectionMethod->invoke($obj) :
+                                        call_user_func_array([
+                                            $obj, $methodName
+                                                ], $paramArray);
                         exit;
                     }
 
-                # Validate Request
+                    # Validate Request
 
-                  (empty($pApiArray))?
-                        $reflectionMethod->invoke($obj):
-                        call_user_func_array([
-                            $obj, $methodName
-                                ], $pApiArray);
-
-                    
+                    (empty($pApiArray)) ?
+                                    $reflectionMethod->invoke($obj) :
+                                    call_user_func_array([
+                                        $obj, $methodName
+                                            ], $pApiArray);
                 } else {
                     echo "Can't load  " . $methodName;
                     die;
                 }
             } else {
-                self::checkMiddleware($appType , $routedUri );
+                self::checkMiddleware($appType, $routedUri);
 
                 new $controllerName;
             }
@@ -409,81 +395,77 @@ class Router implements RouterInterface
         /*
          * If Argument Is Function
          */ else {
-      
-            self::checkMiddleware($appType , $routedUri );
-            
+
+            self::checkMiddleware($appType, $routedUri);
+
             $pApiArray = [];
-            
+
             $routeParams = [];
 
             if ($appType == 'api') {
-              $methodParams = shcol($routedUri.'.params', self::$apiRoutes[self::$_currentRequstMethod],[]);
-                $pApiArray = self::generateApiArr(explode('/', $uri),  $methodParams);     
+                $methodParams = shcol($routedUri . '.params', self::$apiRoutes[self::$_currentRequstMethod], []);
+                $pApiArray = self::generateApiArr(explode('/', $uri), $methodParams);
 
                 if (count($pApiArray)) {
-                 $routeWhere = shcol($routedUri.'.whereParams',self::$apiRoutes[self::$_currentRequstMethod],[]);
+                    $routeWhere = shcol($routedUri . '.whereParams', self::$apiRoutes[self::$_currentRequstMethod], []);
 
-                   self::validate($pApiArray,$routeWhere);
-                 } 
+                    self::validate($pApiArray, $routeWhere);
+                }
 
-                 
-                  
-                 if ( count( $methodParams ) ) {
-                    $routeParams = self::getRouteParams($uri,$methodParams);
-                 } 
-            } 
-          
-            $ReflectionFunction = new \ReflectionFunction($routedArg);
-            
-            $paramCount = count($ReflectionFunction->getParameters());
-            
-            $ps = [];
-            
 
-            foreach ( $ReflectionFunction->getParameters() as $param ) {
-                 if ( array_key_exists($param->getName(), $routeParams) )  {
-                      $ps[] = $routeParams[$param->getName()];
-                 }
+
+                if (count($methodParams)) {
+                    $routeParams = self::getRouteParams($uri, $methodParams);
+                }
             }
 
-            
+            $ReflectionFunction = new \ReflectionFunction($routedArg);
+
+            $paramCount = count($ReflectionFunction->getParameters());
+
+            $ps = [];
+
+
+            foreach ($ReflectionFunction->getParameters() as $param) {
+                if (array_key_exists($param->getName(), $routeParams)) {
+                    $ps[] = $routeParams[$param->getName()];
+                }
+            }
+
+
 
             try {
 
-             $ReflectionFunction->invokeArgs($ps);
-           
+                $ReflectionFunction->invokeArgs($ps);
             } catch (\ArgumentCountError $e) {
-              exit($e->getMessage());
+                exit($e->getMessage());
             }
         }
         // Wrong Request method else
     }
 
-
-    private static function getRouteParams ( string $uri , array $params  ) 
+    private static function getRouteParams(string $uri, array $params)
     {
-       if ( empty( $params ) ) {
-           return false;
-       }
-         
-        $expPath = explode('/', $uri); 
- 
-        $newParamsArray = explode(' ',preg_replace_callback('/{(.*?)\}/i', function( $match )  {
-            
-            
-              $result = explode(':', shcol(1,$match));
+        if (empty($params)) {
+            return false;
+        }
 
-               if (count($result) == 1) {
-                 return $result[0];
-               } 
+        $expPath = explode('/', $uri);
 
-              if (count($result) == 2 ) {
-                 return $result[1];
-              }
+        $newParamsArray = explode(' ', preg_replace_callback('/{(.*?)\}/i', function( $match ) {
 
-        
-        },implode(' ', $params)));
-        
+
+                    $result = explode(':', shcol(1, $match));
+
+                    if (count($result) == 1) {
+                        return $result[0];
+                    }
+
+                    if (count($result) == 2) {
+                        return $result[1];
+                    }
+                }, implode(' ', $params)));
+
         $result = [];
         $keys = array_keys($params);
 
@@ -495,155 +477,155 @@ class Router implements RouterInterface
         return $result;
     }
 
-    private static function generateApiArr ( $expUri, $methodParams ) 
+    private static function generateApiArr($expUri, $methodParams)
     {
         $pApiArray = [];
-        foreach ( $methodParams as $key => $methValue) {
+        foreach ($methodParams as $key => $methValue) {
 
-                            $pApiArray[$methValue] =  $expUri[$key];
+            $pApiArray[$methValue] = $expUri[$key];
         }
 
-        return $pApiArray; 
+        return $pApiArray;
     }
 
-    protected static function checkMiddleware ($appType , $routedUri ) 
+    protected static function checkMiddleware($appType, $routedUri)
     {
-       $currentMiddlewareToExecute = ( $appType == 'api')?
-                        shcol('middleware',self::$apiRoutes[self::$_currentRequstMethod][$routedUri],null)
-                   : shcol('middleware',self::$_routes[self::$_currentRequstMethod][$routedUri],null);
+        $currentMiddlewareToExecute = ( $appType == 'api') ?
+                shcol('middleware', self::$apiRoutes[self::$_currentRequstMethod][$routedUri], null) : shcol('middleware', self::$_routes[self::$_currentRequstMethod][$routedUri], null);
 
-                    if (!is_null( $currentMiddlewareToExecute )) {
-                        Middleware::handle($currentMiddlewareToExecute);
-                    }
+        if (!is_null($currentMiddlewareToExecute)) {
+            Middleware::handle($currentMiddlewareToExecute);
+        }
     }
 
-
-    public static function group( array $groupOptions, Closure $func )
+    public static function group(array $groupOptions, Closure $func)
     {
-        
-       self::$groupOptions['started'] = true;
 
-       call_user_func_array($func,['pk']);
+        self::$groupOptions['started'] = true;
+
+        call_user_func_array($func, ['pk']);
     }
 
-    public static function apiEndpointExists($expectedEndpoint) {
+    public static function apiEndpointExists($expectedEndpoint)
+    {
         return (in_array($expectedEndpoint, self::getListOfApiEndpoints())) ? true : false;
     }
 
-    private static function isApiRouteConfirmed( $uri )
+    private static function isApiRouteConfirmed($uri)
     {
-       $listOfApiEndpoints = self::getListOfApiEndpoints($uri);
+        $listOfApiEndpoints = self::getListOfApiEndpoints($uri);
 
-       if ( !count($listOfApiEndpoints) ) {
-           return false;
-       }
+        if (!count($listOfApiEndpoints)) {
+            return false;
+        }
 
-       foreach ( $listOfApiEndpoints as $endpoint ) {
-          if ( self::matches($uri,$endpoint) ) return true;  
-       }
+        foreach ($listOfApiEndpoints as $endpoint) {
+            if (self::matches($uri, $endpoint))
+                return true;
+        }
 
-       return false;
-
+        return false;
     }
 
-    private static function matches ( $uri, $endpoint )
+    private static function matches($uri, $endpoint)
     {
-         $uriArr = array_filter(explode('/',$uri));
-         $endpointArr = array_filter(explode('/', $endpoint));
-  
-         
-         if ( count($uriArr) !== count($endpointArr) ) {
-             return false;
-         }
+        $uriArr = array_filter(explode('/', $uri));
+        $endpointArr = array_filter(explode('/', $endpoint));
 
-         $diff = array_diff($endpointArr,$uriArr);
-         
-         if (!self::containsBraces( $endpointArr ) && count($diff) == 0) {
-             return true;
-         } 
 
-         if ( count($diff) == 0 ) return false; 
+        if (count($uriArr) !== count($endpointArr)) {
+            return false;
+        }
 
-         foreach ($diff as $key => $part) {
-           if (!self::stringContainsBraces($part)) {
-             return false;
-           }
-         }
+        $diff = array_diff($endpointArr, $uriArr);
 
-         // update endpoint uri with correct value
-          
-         self::setCorrectApiUri($uri,$endpoint,$diff);
-         return true;
+        if (!self::containsBraces($endpointArr) && count($diff) == 0) {
+            return true;
+        }
 
+        if (count($diff) == 0)
+            return false;
+
+        foreach ($diff as $key => $part) {
+            if (!self::stringContainsBraces($part)) {
+                return false;
+            }
+        }
+
+        // update endpoint uri with correct value
+
+        self::setCorrectApiUri($uri, $endpoint, $diff);
+        return true;
     }
 
-    private static function setCorrectApiUri ( $uri, $endpoint, $params ) 
+    private static function setCorrectApiUri($uri, $endpoint, $params)
     {
-         $endpointUri = self::getApiUriWithoutPrefix($endpoint);
-         $actualUri   = self::getApiUriWithoutPrefix($uri);
-         
-         self::$apiRoutes[self::$_currentRequstMethod][$actualUri] = self::$apiRoutes[self::$_currentRequstMethod][$endpointUri];
-         self::$apiRoutes[self::$_currentRequstMethod][$actualUri]['params'] = $params;
-        
-         unset(self::$apiRoutes[self::$_currentRequstMethod][$endpointUri]);
+        $endpointUri = self::getApiUriWithoutPrefix($endpoint);
+        $actualUri = self::getApiUriWithoutPrefix($uri);
+
+        self::$apiRoutes[self::$_currentRequstMethod][$actualUri] = self::$apiRoutes[self::$_currentRequstMethod][$endpointUri];
+        self::$apiRoutes[self::$_currentRequstMethod][$actualUri]['params'] = $params;
+
+        unset(self::$apiRoutes[self::$_currentRequstMethod][$endpointUri]);
     }
 
-    public function name ( string $nameOfRoute ) 
+    public function name(string $nameOfRoute)
     {
-        if(empty( $nameOfRoute ) ) {
-             return;
+        if (empty($nameOfRoute)) {
+            return;
         }
 
 
-       $lastRoute = (self::$lastRouteIsFrom == 'web') ? 
-           self::getLastWebRoute() == '/' ? '' : self::getLastWebRoute() :
-           self::getLastApiRoute();
-       
-       self::$nameCollection[trim($nameOfRoute)] = [
-        'from'     => self::$lastRouteIsFrom, 
-        'endpoint' => $lastRoute
-       ];
+        $lastRoute = (self::$lastRouteIsFrom == 'web') ?
+                self::getLastWebRoute() == '/' ? '' : self::getLastWebRoute() :
+                self::getLastApiRoute();
+
+        self::$nameCollection[trim($nameOfRoute)] = [
+            'from' => self::$lastRouteIsFrom,
+            'endpoint' => $lastRoute
+        ];
 
 
-       return $this; 
+        return $this;
     }
 
-    public function where ( array $whereParams )
+    public function where(array $whereParams)
     {
-     
-       
-       $lastApiRoute = shcol('uri',self::getLastApiRoute());
 
-       if ( empty($lastApiRoute) ) {
-          return ;
-       }
-      
-      self::$apiRoutes[self::$_currentRequstMethod][$lastApiRoute]['whereParams']  = $whereParams;
-      return new static;
+
+        $lastApiRoute = shcol('uri', self::getLastApiRoute());
+
+        if (empty($lastApiRoute)) {
+            return;
+        }
+
+        self::$apiRoutes[self::$_currentRequstMethod][$lastApiRoute]['whereParams'] = $whereParams;
+        return new static;
     }
 
-    private static function getApiUriWithoutPrefix ($apiUri) {
-
-       return implode('/', array_filter(explode('/', $apiUri), function ($value, $key) {
-                        if ($key > 0) {
-                            return true;
-                        }
-                    }, ARRAY_FILTER_USE_BOTH));
-    }
-
-    
-    public static function setDefaultApiPrefix( $apiPrefix )
+    private static function getApiUriWithoutPrefix($apiUri)
     {
-        if ( !empty( $apiPrefix ) && is_string( $apiPrefix ) ) {
+
+        return implode('/', array_filter(explode('/', $apiUri), function ($value, $key) {
+                    if ($key > 0) {
+                        return true;
+                    }
+                }, ARRAY_FILTER_USE_BOTH));
+    }
+
+    public static function setDefaultApiPrefix($apiPrefix)
+    {
+        if (!empty($apiPrefix) && is_string($apiPrefix)) {
             self::$defaultApiPrefix = trim(strip_tags($apiPrefix));
         }
     }
 
-    private static function getListOfApiEndpoints() {
+    private static function getListOfApiEndpoints()
+    {
 
         $endpoints = [];
 
-        
+
         $t = shcol(self::$_currentRequstMethod, self::$apiRoutes);
 
         if (empty($t)) {

@@ -269,6 +269,7 @@ class Builder  implements \Shadowapp\Sys\Db\QueryBuilderInterface
       '_rawWhereData',
       '_addWhereArr'
      ];
+
      $propetyList = get_class_vars(get_class($this));
 
      foreach ($propetyList as $classProperty => $propertyValue) {
@@ -314,12 +315,18 @@ class Builder  implements \Shadowapp\Sys\Db\QueryBuilderInterface
      try
      {
          $table = $this->clean($table);
+
+
          $this->_stmt = $this->_con->query("SHOW KEYS FROM $table WHERE Key_name = 'PRIMARY'");
           
         $primaryKeyData = $this->_stmt->fetch(PDO::FETCH_OBJ);
+
+
          if ($primaryKeyData != false) {
            return $primaryKeyData->Column_name;
          } 
+
+         
          return false;  
      } catch (\PDOException $e) {
         throw new \Shadowapp\Sys\Exceptions\Db\WrongQueryException($e->getMessage());
