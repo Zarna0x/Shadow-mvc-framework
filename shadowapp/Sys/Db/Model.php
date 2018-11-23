@@ -4,6 +4,8 @@ namespace Shadowapp\Sys\Db;
 
 use Shadowapp\Sys\Db\Query\Builder as db;
 use Shadowapp\Sys\Traits\RelationshipTrait;
+use Shadowapp\Sys\Eventing\Interfaces\EventInterface;
+use Shadowapp\Sys\Eventing\Event;
 
 abstract class Model 
 {
@@ -221,6 +223,18 @@ abstract class Model
 
         return ($dataType == 'object') ?
                 shcol('0', $result) : (array) shcol('0', $result);
+    }
+    
+    public function raiseEvent( EventInterface $event )
+    {
+        Event::raise( $event );   
+        return $this;
+    }
+    
+    public function raiseEvents( array $events )
+    {
+        Event::raiseMany($events);
+        return $this;
     }
 
 }

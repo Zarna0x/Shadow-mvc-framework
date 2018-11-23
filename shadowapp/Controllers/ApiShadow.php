@@ -7,7 +7,7 @@ use Shadowapp\Sys\Http\Middleware;
 use Shadowapp\Sys\Routing\Router;
 use Shadowapp\Sys\Commanding\CommandBus;
 
-use Shadowapp\Components\Commanding\Commands\CreateNewInvoice;
+use Shadowapp\Components\Commanding\Commands\CreateNewOrder;
 
 class ApiShadow
 {
@@ -21,10 +21,8 @@ class ApiShadow
     }
 
     public function kk()
-    {
-        $command = new CreateNewInvoice(4,'12','FirstInvoice');
-        CommandBus::execute($command);
-        
+    { 
+        CommandBus::execute(new CreateNewOrder(3,'NewOrderNWA'));
     }
 
     public function auth($username, $resourceId, $k = 'asd')
