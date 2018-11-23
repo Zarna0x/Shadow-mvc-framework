@@ -15,19 +15,27 @@ class Event
 
     protected static $eventQueue = [];
 
-    public static function raise(EventInterface $event)
+    public static function raise(EventInterface $event, $table = null )
     {
         $eventName = self::getEventName($event);
-        self::$eventQueue[$eventName] = $event;
-    }
-
-    public static function raiseMany( array $events )
-    {
-        foreach ( $events as $event ) {
-            self::raise($event);
+        self::$eventQueue[$eventName]['event'] = $event;
+        if (!is_null($table)) {
+            self::$eventQueue[$eventName]['table'] = $table;
         }
         
-        echo '<pre>'.print_R(self::$eventQueue,1).'</pre>'; 
+    }
+
+    public static function raiseMany( array $events, $table = null )
+    {
+        foreach ( $events as $event ) {
+            self::raise($event , $table);
+        }
+        
+    }
+    
+    public static function fire( $eventName )
+    {
+        
     }
 
     private static function getEventName(EventInterface $event)

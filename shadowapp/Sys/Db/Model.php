@@ -227,14 +227,19 @@ abstract class Model
     
     public function raiseEvent( EventInterface $event )
     {
-        Event::raise( $event );   
+        Event::raise( $event, $this->table );   
         return $this;
     }
     
     public function raiseEvents( array $events )
     {
-        Event::raiseMany($events);
+        Event::raiseMany($events,$this->table);
         return $this;
+    }
+    
+    public function dispatchAllEvents()
+    {
+        
     }
 
 }

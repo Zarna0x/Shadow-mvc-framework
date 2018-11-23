@@ -9,8 +9,8 @@
 namespace Shadowapp\Models;
 
 use Shadowapp\Sys\Db\Model;
-use Shadowapp\Components\Events\OrderWasGenerated;
-use Shadowapp\Components\Events\SomethingHappened;
+use Shadowapp\Components\Events\Eventing\OrderWasGenerated;
+use Shadowapp\Components\Events\Eventing\SomethingHappened;
 
 class OrdersShadow extends Model
 {
@@ -25,9 +25,5 @@ class OrdersShadow extends Model
        // Raise EVENTS!
        
        $this->raiseEvents([new orderWasGenerated($this),new SomethingHappened($this)]);
-               
-       
-       
-       
    }
 }

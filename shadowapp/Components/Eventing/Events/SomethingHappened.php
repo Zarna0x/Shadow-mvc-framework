@@ -6,7 +6,7 @@
  * and open the template in the editor.
  */
 
-namespace Shadowapp\Components\Events;
+namespace Shadowapp\Components\Events\Eventing;
 
 use Shadowapp\Sys\Eventing\Interfaces\EventInterface;
 

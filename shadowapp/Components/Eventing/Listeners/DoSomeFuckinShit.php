@@ -6,10 +6,12 @@
  * and open the template in the editor.
  */
 
-namespace Shadowapp\Components\Events;
-
-
-class InvoiceWasCreated
+/**
+ * Description of DoSomeFuckinShit
+ *
+ * @author root
+ */
+class DoSomeFuckinShit
 {
     //put your code here
 }
