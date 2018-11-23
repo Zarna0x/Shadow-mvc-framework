@@ -40,38 +40,36 @@ class CreateCommand extends Command
             $this->create($commandHandlerPath,true);
         }
         
+        
         $this->create($commandPath);
         
+          echo "\n \033[35m Command generated Succesfully... \033[0m   \n\n";
         
     }
     
     private function create ( $path, $isHandler = false )
     {
          
-        
-        
         $file = fopen($path, "w");
         
        
-        $preferedTemplate = ($isHandler) ? getcwd() . '/shadowapp/sh_console/templates/command.template':
+        $preferedTemplate = (!$isHandler) ? getcwd() . '/shadowapp/sh_console/templates/command.template':
             getcwd() . '/shadowapp/sh_console/templates/commandHandler.template'; 
         
-    
+        $nameOfClass = $this->getClassNameFromPath($path);
         
-        #get template's content
-        $templateCont = file_get_contents($templatePath);
         
-        die;
+        $templateCont = file_get_contents($preferedTemplate);
         
-        # get controller name correctly
-        //$cArr = explode('.', $controllerName);
         
         # replace with real name
-        //$sampleController = str_replace("__controllerName__", $cArr[0], $templateCont);
+        $compiled = str_replace("__PLACEHOLDER__", $nameOfClass, $templateCont);
         
-        //fwrite($file, $sampleController);
         
-        //fclose($file); 
+        
+        fwrite($file, $compiled);
+        
+        fclose($file); 
     }
     
     private function checkOrGetIfCommandExists ( string $command, OutputInterface $out)
@@ -96,6 +94,20 @@ class CreateCommand extends Command
         }
         
         return $commandHandlerFile;
+    }
+    
+    private function getClassNameFromPath ( $path ) 
+    {
+        if (empty ($path)) {
+            exit('Template path dont have to be empty');
+        }
+        
+        $explodedPathEnd = explode('/', $path);
+        $withTemp = explode('.',end($explodedPathEnd));
+        
+        return ucfirst(shcol('0',$withTemp));
+        
+        
     }
 
 }

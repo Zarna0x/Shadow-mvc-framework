@@ -11,7 +11,7 @@ namespace Shadowapp\Components\Commanding\CommandHandlers;
 use Shadowapp\Sys\Commanding\Interfaces\CommandInterface;
 use Shadowapp\Sys\Commanding\Interfaces\CommandHandlerInterface;
 
-class __PLACEHOLDER__ implements CommandHandlerInterface
+class CreateNewOrderHandler implements CommandHandlerInterface
 {
     public function handle(CommandInterface $command )
     {

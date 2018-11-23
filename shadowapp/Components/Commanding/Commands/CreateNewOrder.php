@@ -4,7 +4,7 @@ namespace Shadowapp\Components\Commanding\Commands;
 
 use Shadowapp\Sys\Commanding\Interfaces\CommandInterface;
 
-class __PLACEHOLDER__ implements CommandInterface
+class CreateNewOrder implements CommandInterface
 {
     public function __construct()
     {
