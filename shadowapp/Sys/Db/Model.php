@@ -6,14 +6,16 @@ use Shadowapp\Sys\Db\Query\Builder as db;
 use Shadowapp\Sys\Traits\RelationshipTrait;
 use Shadowapp\Sys\Eventing\Interfaces\EventInterface;
 use Shadowapp\Sys\Eventing\Event;
+use Shadowapp\Sys\Traits\Eventing\Eventer as EventTrait;
 
-abstract class Model 
+abstract class Model
 {
 
     use RelationshipTrait;
+    use EventTrait;
 
     protected $db;
-    private   $table = '';
+    private $table = '';
     protected $con;
     protected $_tableCollection = [];
     protected $relatedTables = [];
@@ -21,7 +23,8 @@ abstract class Model
     protected $relatedResults = [];
     protected $fullModelClass = '';
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->db = new db;
         $this->getTable();
     }
@@ -33,7 +36,8 @@ abstract class Model
         }
     }
 
-    public function __call($name, $arguments) {
+    public function __call($name, $arguments)
+    {
         $calledRelMethod = strtolower($name);
         if (!in_array($calledRelMethod, $this->allowedRelationshipMethods)) {
             return;
@@ -44,15 +48,18 @@ abstract class Model
         return $this->$methodToCall($arguments);
     }
 
-    public function __get($columnName) {
+    public function __get($columnName)
+    {
         return $this->_tableCollection[$columnName];
     }
 
-    public function getTableData() {
+    public function getTableData()
+    {
         return $this->_tableCollection;
     }
 
-    public function save() {
+    public function save()
+    {
 
         if (!count($this->_tableCollection)) {
             echo "Specify Columns to inserts";
@@ -78,7 +85,8 @@ abstract class Model
         return true;
     }
 
-    public function getColumnList() {
+    public function getColumnList()
+    {
         $this->con = Connection::get();
         $stmt = $this->con->query("DESCRIBE " . $this->table);
         $stmt->execute();
@@ -89,14 +97,16 @@ abstract class Model
         return $fieldData;
     }
 
-    protected function getTable() {
+    protected function getTable()
+    {
         $fullClassName = new \ReflectionClass(get_called_class());
         $offset = strpos($fullClassName->getShortName(), 'Shadow');
         $this->fullModelClass = shcol('name', $fullClassName);
         $this->table = strtolower(substr($fullClassName->getShortName(), 0, $offset));
     }
 
-    public function withRelated($foreignTables) {
+    public function withRelated($foreignTables)
+    {
 
 
 
@@ -128,7 +138,8 @@ abstract class Model
         return $this;
     }
 
-    protected function getRelatedMethods($foreignTables) {
+    protected function getRelatedMethods($foreignTables)
+    {
         if (!is_string($foreignTables) && !is_array($foreignTables)) {
             throw new \ Shadowapp\Sys\Exceptions\WrongVariableTypeException("Wrong Variable Type. Variable should be array or string", 1);
         }
@@ -155,7 +166,8 @@ abstract class Model
      * if table doesnot contains primary key result will be fetchecd by ID
      */
 
-    public function find($primaryKeyOrArray) {
+    public function find($primaryKeyOrArray)
+    {
         if (is_array($primaryKeyOrArray)) {
             $result = $this->db->where($primaryKeyOrArray)->get($this->table);
         } else {
@@ -183,13 +195,14 @@ abstract class Model
         return $withRel;
     }
 
-    private function generateWithRelationships($fetchedData) {
+    private function generateWithRelationships($fetchedData)
+    {
         if (!is_object($fetchedData) && !is_array($fetchedData)) {
             throw new \ Shadowapp\Sys\Exceptions\WrongVariableTypeException("Wrong Variable Type. Variable should be array or object", 1);
         }
 
         try {
-            
+
             foreach ($this->relatedResults as $rName => $rArray) {
                 extract($rArray);
                 $foreignKeyValue = shcol($foreign_key, $fetchedData);
@@ -198,17 +211,17 @@ abstract class Model
 
                 $fetchedData->$rel_tbl_name = (false === $stmt->execute([$foreignKeyValue])) ? [] : $stmt->fetchAll(\PDO::FETCH_OBJ);
             }
-          
-            
+
+
             return $fetchedData;
         } catch (\PDOException $e) {
             throw new \Shadowapp\Sys\Exceptions\Db\WrongQueryException($e->getMessage());
         }
     }
 
-   public function findFirst($primaryKeyOrArray, $dataType = 'array')
-   {
-      $result = $this->find( $primaryKeyOrArray );
+    public function findFirst($primaryKeyOrArray, $dataType = 'array')
+    {
+        $result = $this->find($primaryKeyOrArray);
 
 
         if (false === $result) {
@@ -223,23 +236,6 @@ abstract class Model
 
         return ($dataType == 'object') ?
                 shcol('0', $result) : (array) shcol('0', $result);
-    }
-    
-    public function raiseEvent( EventInterface $event )
-    {
-        Event::raise( $event, $this->table );   
-        return $this;
-    }
-    
-    public function raiseEvents( array $events )
-    {
-        Event::raiseMany($events,$this->table);
-        return $this;
-    }
-    
-    public function dispatchAllEvents()
-    {
-        
     }
 
 }

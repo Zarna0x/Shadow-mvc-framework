@@ -9,13 +9,19 @@
 namespace Shadowapp\Components\Eventing\Events;
 
 use Shadowapp\Sys\Eventing\Interfaces\EventInterface;
+use Shadowapp\Models\StaffShadow;
 
-class OrderWasGenerated implements EventInterface
+class UserWasUpdated implements EventInterface
 {
-    public $order;
+    protected $staff;
     
-    public function __construct( $order )
+    public function __construct(StaffShadow $staff )
     {
-        $this->order = $order;
+       $this->staff = $staff;
+    }
+    
+    public function getStaff()
+    {
+        return $this->staff;
     }
 }

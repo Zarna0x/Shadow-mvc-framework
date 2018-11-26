@@ -15,12 +15,6 @@ class CreateNewInvoiceHandler implements CommandHandlerInterface
 {
     public function handle(CommandInterface $command )
     {
-        // handle some data
-        
-        Event::raise();
-        Event::fire();
-        Event::fireRaisedEvents();
-        Event::fireFromRaised();
-        
+        var_dump(123);
     }
 }

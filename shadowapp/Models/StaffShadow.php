@@ -4,6 +4,8 @@ namespace Shadowapp\Models;
 
 use Shadowapp\Sys\Db\Model;
 use Shadowapp\Sys\Db\Query\Builder as DB;
+use Shadowapp\Components\Eventing\Events\UserWasUpdated;
+use Shadowapp\Components\Eventing\Events\OrderWasGenerated;
 
 Class StaffShadow extends Model
 {
@@ -154,6 +156,21 @@ Class StaffShadow extends Model
       
      return shcol('0',$staffUser);
 
+   }
+   
+   public function addOrder(\Shadowapp\Sys\Commanding\Interfaces\CommandInterface $command)
+   {
+       $staffData = $this->findFirst($command->staffId);
+       if (!$staffData) {
+           return false;
+       }
+       
+       $this->db->where(['id'=>$command->staffId])->update('staff', [
+           'lastname' => 'gaa'
+       ]);
+       
+       $this->raiseMany([new UserWasUpdated($this),new OrderWasGenerated($this)]);
+       
    }
 
 

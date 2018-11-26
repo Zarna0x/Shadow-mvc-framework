@@ -6,7 +6,8 @@ define("JSON_DIR",BASEDIR.DS."shadowapp".DS."sh_db");
 define("MIDDLEWARE_DIR",BASEDIR.DS."shadowapp".DS."Components".DS."Middlewares");
 define("COMMANDS_DIR",BASEDIR.DS."shadowapp".DS."Components".DS.'Commanding'.DS."Commands".DS);
 define("COMMAND_HANDLER_DIR",BASEDIR.DS."shadowapp".DS."Components".DS.'Commanding'.DS."CommandHandlers".DS);
-
+define("CONFIG_DIR", BASEDIR.DS.'shadowapp'.DS.'config'.DS);
+define("EVENT_LISTENERS_DIR",BASEDIR.DS.'shadowapp'.DS.'Components'.DS.'Eventing'.DS.'Listeners'.DS);
 
 if (!function_exists('setDir')) {
   function setDir($dirPath)
