@@ -9,6 +9,7 @@ trait Eventer
 {
 
 	use RouteValidatorTrait;
+	
 	protected $eventQueue = [];
 
 	public function raise( EventInterface $event )
@@ -79,7 +80,9 @@ trait Eventer
 
 		foreach ( $this->getEventQueue() as $eventName => $event )
 		{
+			
 			$listeners = EventDispatcher::getListener( $eventName );
+			
 			if ( !$listeners )
 			{
 				continue;
