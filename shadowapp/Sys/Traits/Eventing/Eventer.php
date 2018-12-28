@@ -9,7 +9,6 @@ trait Eventer
 {
 
 	use RouteValidatorTrait;
-
 	protected $eventQueue = [];
 
 	public function raise( EventInterface $event )
@@ -87,18 +86,35 @@ trait Eventer
 	protected function handleListeners( string $eventName, array $listeners )
 	{
 		if ( !count( $listeners ) )
+		{
 			return;
+		}
 
 		foreach ( $listeners as $listener )
 		{
-			var_dump($listener);continue;
+
+			if ( !is_callable( $listener ) && !is_string( $listener ) )
+			{
+				continue;
+			}
+
+			$postFix = (is_callable( $listener )) ? 'Callable' : 'Class';
+			$methToExec = 'handleListener'.$postFix;
 			
-			$listenerPath = EVENT_LISTENERS_DIR . $listener . '.php';
+			$this->$methToExec($eventName, $listener );
+		}
+
+	}
+
+	private function handleListenerClass( string $eventName, string $listener)
+	{
+		  $listenerPath = EVENT_LISTENERS_DIR . $listener . '.php';
+			
 			$fileInfo = new \SplFileInfo( $listenerPath );
 
 			if ( $fileInfo->getRealPath() === false )
 			{
-				continue;
+				return;
 			}
 
 			$fullClassName = '\\Shadowapp\\Components\\Eventing\\Listeners\\' . $listener;
@@ -115,8 +131,11 @@ trait Eventer
 			$event = $this->eventQueue[$eventName]['event'];
 
 			$methodToExecute->invoke( new $fullClassName, $event );
-		}
+	}
 
+	private function handleListenerCallable(string $eventName, callable $listenerCallable )
+	{
+		var_dump('okkk');		
 	}
 
 }
