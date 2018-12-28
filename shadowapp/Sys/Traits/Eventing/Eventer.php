@@ -7,8 +7,8 @@ use Shadowapp\Sys\Traits\RouteValidatorTrait;
 
 trait Eventer
 {
-
-	use RouteValidatorTrait;
+  use RouteValidatorTrait;
+	
 	protected $eventQueue = [];
 
 	public function raise( EventInterface $event )
@@ -30,6 +30,11 @@ trait Eventer
 	{
 		$eventsToHandle = $this->eventQueue[$eventName];
 
+	}
+	
+	public function addListener( string $eventName, $listener  )
+	{
+		EventDispatcher::addListener($eventName, $listener);
 	}
 
 	private function getEventName( EventInterface $event )
@@ -137,5 +142,7 @@ trait Eventer
 	{
 		var_dump('okkk');		
 	}
+	
+	 
 
 }
