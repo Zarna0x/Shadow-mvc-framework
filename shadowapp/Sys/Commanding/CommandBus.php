@@ -8,6 +8,7 @@ use Shadowapp\Sys\Commanding\Interfaces\CommandHandlerInterface;
 class CommandBus
 {
     protected $defaultCommandHandlerNamespace = 'Shadowapp\\Components\\Commanding\\CommandHandlers\\';
+
     protected $defaultCommandHandlerSuffix = 'Handler';
     
     private function __construct(){}
@@ -24,6 +25,7 @@ class CommandBus
     public function getCommandHandler( CommandInterface $command ) 
     {
         $commandName = (new \ReflectionClass($command))->getShortName();
+        
         $expectedHandler = $this->defaultCommandHandlerNamespace.$commandName.$this->defaultCommandHandlerSuffix;
         
         if (!class_exists($expectedHandler)) {

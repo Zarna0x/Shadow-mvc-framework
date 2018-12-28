@@ -14,5 +14,5 @@ namespace Shadowapp\Sys\Eventing\Interfaces;
  */
 interface EventInterface
 {
- 
+	
 }

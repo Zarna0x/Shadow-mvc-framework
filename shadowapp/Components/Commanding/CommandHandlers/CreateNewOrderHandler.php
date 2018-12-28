@@ -20,15 +20,20 @@ class CreateNewOrderHandler implements CommandHandlerInterface
     
     public function handle(CommandInterface $command )
     {
-       //Store Data;
+			
+       //Store order;
        $this->order->store([
            'staffId' => $command->staffId,
            'title' => $command->title
        ]);
        
+
+       //
        $this->staff->addOrder($command);
-      
-       $this->order->dispatchAll();
+       
+
+ 
+       $this->staff->dispatchAll();
        
         
     }

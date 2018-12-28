@@ -160,16 +160,19 @@ Class StaffShadow extends Model
    
    public function addOrder(\Shadowapp\Sys\Commanding\Interfaces\CommandInterface $command)
    {
-       $staffData = $this->findFirst($command->staffId);
-       if (!$staffData) {
-           return false;
-       }
+
+
+       // $staffData = $this->findFirst($command->staffId);
+       // if (!$staffData) {
+       //     return false;
+       // }
        
-       $this->db->where(['id'=>$command->staffId])->update('staff', [
-           'lastname' => 'gaa'
-       ]);
+       // $this->db->where(['id'=>$command->staffId])->update('staff', [
+       //     'lastname' => 'gaa'
+       // ]);
        
-       $this->raiseMany([new UserWasUpdated($this),new OrderWasGenerated($this)]);
+       $eventsToRaise = [new UserWasUpdated($this),new OrderWasGenerated($this)];
+       $this->raiseMany( $eventsToRaise );
        
    }
 

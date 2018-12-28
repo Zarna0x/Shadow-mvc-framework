@@ -1,89 +1,122 @@
 <?php
-
 namespace Shadowapp\Sys\Traits\Eventing;
 
 use Shadowapp\Sys\Eventing\Interfaces\EventInterface;
+use Shadowapp\Sys\Eventing\EventDispatcher;
+use Shadowapp\Sys\Traits\RouteValidatorTrait;
 
 trait Eventer
 {
 
-    protected $eventQueue = [];
+	use RouteValidatorTrait;
 
-    public function raise(EventInterface $event)
-    {
-        $this->eventQueue[$this->getEventName($event)]['event'] = $event;
-    }
+	protected $eventQueue = [];
 
-    public function raiseMany(array $events)
-    {
-        foreach ($events as $event) {
-            $this->raise($event);
-        }
-    }
+	public function raise( EventInterface $event )
+	{
+		$this->eventQueue[$this->getEventName( $event )]['event'] = $event;
 
-    public function fire($eventName)
-    {
-        $eventsToHandle = $this->eventQueue[$eventName];
-    }
+	}
 
-    private function getEventName(EventInterface $event)
-    {
-        return (new \ReflectionClass($event))->getShortName();
-    }
+	public function raiseMany( array $events )
+	{
+		foreach ( $events as $event )
+		{
+			$this->raise( $event );
+		}
 
-    public function getEventQueue()
-    {
-        return $this->eventQueue;
-    }
+	}
 
-    public function dispatchAll()
-    {
-        if (!count($this->eventQueue)) {
-            throw new \Exception('No event is raised.');
-        }
+	public function fire( $eventName )
+	{
+		$eventsToHandle = $this->eventQueue[$eventName];
 
-        $listOfListeners = (new \Shadowapp\Sys\Config)->getFromFile('EventListeners');
+	}
+
+	private function getEventName( EventInterface $event )
+	{
+		try
+		{
+			$constName = (new \ReflectionClassConstant( $event, 'NAME' ) )->getValue();
+
+			if ( is_string( $constName ) && !empty( $constName ) )
+			{
+				return trim( $constName );
+			}
+		}
+		catch ( \ReflectionException $e )
+		{
+			
+		}
+
+		$className = (new \ReflectionClass( $event ) )->getShortName();
+
+		return self::splitAtUpperCase( $className, '.' );
+
+	}
+
+	public function getEventQueue()
+	{
+		return $this->eventQueue;
+
+	}
+
+	public function dispatchAll()
+	{
+
+		if ( !count( $this->eventQueue ) )
+		{
+			throw new \Exception( 'No event is raised.' );
+		}
+
+		// execute every Handle method for each event
 
 
-        // execute every Handle method for each event
+		foreach ( $this->getEventQueue() as $eventName => $event )
+		{
+			$listeners = EventDispatcher::getListener( $eventName );
+			if ( !$listeners )
+			{
+				continue;
+			}
+			$this->handleListeners( $eventName, $listeners );
+		}
 
-        if (!count($listOfListeners)) {
-            return;
-        }
+	}
 
-        foreach ($listOfListeners as $eventName => $listeners) {
-            if (!array_key_exists($eventName, $this->eventQueue))
-                continue;
-            $this->handleListeners($eventName, $listeners);
-        }
-    }
+	protected function handleListeners( string $eventName, array $listeners )
+	{
+		if ( !count( $listeners ) )
+			return;
 
-    protected function handleListeners(string $eventName, array $listeners)
-    {
-        if (!count($listeners))
-            return;
+		foreach ( $listeners as $listener )
+		{
+			var_dump($listener);continue;
+			
+			$listenerPath = EVENT_LISTENERS_DIR . $listener . '.php';
+			$fileInfo = new \SplFileInfo( $listenerPath );
 
-        foreach ($listeners as $listener) {
-            $listenerPath = EVENT_LISTENERS_DIR . $listener . '.php';
-            $fileInfo = new \SplFileInfo($listenerPath);
-            if ($fileInfo->getRealPath() === false) {
-                continue;
-            }
+			if ( $fileInfo->getRealPath() === false )
+			{
+				continue;
+			}
 
-            $fullClassName = '\\Shadowapp\\Components\\Eventing\\Listeners\\' . $listener;
-            $reflectionClass = new \ReflectionClass($fullClassName);
-            $expectedInterface = 'Shadowapp\Sys\Eventing\Interfaces\EventHandlerInterface';
+			$fullClassName = '\\Shadowapp\\Components\\Eventing\\Listeners\\' . $listener;
+			$reflectionClass = new \ReflectionClass( $fullClassName );
+			$expectedInterface = 'Shadowapp\Sys\Eventing\Interfaces\EventHandlerInterface';
 
-            if (!in_array($expectedInterface, $reflectionClass->getInterfaceNames())) {
-                throw new \Exception($listener . ' must implement ' . $expectedInterface);
-            }
+			if ( !in_array( $expectedInterface, $reflectionClass->getInterfaceNames() ) )
+			{
+				throw new \Exception( $listener . ' must implement ' . $expectedInterface );
+			}
 
-            $methodToExecute = $reflectionClass->getMethod('handle');
+			$methodToExecute = $reflectionClass->getMethod( 'handle' );
 
-            $event = $this->eventQueue[$eventName]['event'];
-            
-            $methodToExecute->invoke(new $fullClassName, $event);
-        }
-    }
+			$event = $this->eventQueue[$eventName]['event'];
+
+			$methodToExecute->invoke( new $fullClassName, $event );
+		}
+
+	}
 
 }

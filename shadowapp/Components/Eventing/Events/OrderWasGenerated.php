@@ -12,10 +12,17 @@ use Shadowapp\Sys\Eventing\Interfaces\EventInterface;
 
 class OrderWasGenerated implements EventInterface
 {
-    public $order;
+	  const NAME = 'order.generated';
+		
+    private $order;
     
     public function __construct( $order )
     {
-        $this->order = $order;
+    	$this->order = $order;
+    }
+
+    public function getObject()
+    {
+    	return $this->order;
     }
 }

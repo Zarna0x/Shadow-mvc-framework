@@ -102,7 +102,7 @@ trait RouteValidatorTrait
         }
     }
 
-    private static function splitAtUpperCase(string $string)
+    private static function splitAtUpperCase(string $string,$implodeOn = ' ')
     {
         $splitted = preg_split('/(?=[A-Z])/', $string, -1, PREG_SPLIT_NO_EMPTY);
 
@@ -113,7 +113,7 @@ trait RouteValidatorTrait
             return strtolower($k);
         }, $splitted);
 
-        return implode(' ', $lowered);
+        return implode($implodeOn, $lowered);
     }
 
     protected static function containsBraces($endArr)

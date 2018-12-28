@@ -13,14 +13,16 @@ use Shadowapp\Models\StaffShadow;
 
 class UserWasUpdated implements EventInterface
 {
+	  const NAME = 'user.updated';
+		
     protected $staff;
     
-    public function __construct(StaffShadow $staff )
+    public function __construct( $staff )
     {
        $this->staff = $staff;
     }
     
-    public function getStaff()
+    public function getObject()
     {
         return $this->staff;
     }
