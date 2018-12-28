@@ -9,6 +9,7 @@ class OnOrderGeneration implements EventHandlerInterface
 {
    public function handle( EventInterface $event )
    {
-      var_dump($event->getObject());
+		 var_dump('inhandle');
+
    }
 }

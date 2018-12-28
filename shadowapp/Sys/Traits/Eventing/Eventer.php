@@ -7,8 +7,8 @@ use Shadowapp\Sys\Traits\RouteValidatorTrait;
 
 trait Eventer
 {
-  use RouteValidatorTrait;
-	
+
+	use RouteValidatorTrait;
 	protected $eventQueue = [];
 
 	public function raise( EventInterface $event )
@@ -31,10 +31,11 @@ trait Eventer
 		$eventsToHandle = $this->eventQueue[$eventName];
 
 	}
-	
-	public function addListener( string $eventName, $listener  )
+
+	public function addListener( string $eventName, $listener )
 	{
-		EventDispatcher::addListener($eventName, $listener);
+		EventDispatcher::addListener( $eventName, $listener );
+
 	}
 
 	private function getEventName( EventInterface $event )
@@ -104,45 +105,47 @@ trait Eventer
 			}
 
 			$postFix = (is_callable( $listener )) ? 'Callable' : 'Class';
-			$methToExec = 'handleListener'.$postFix;
-			
-			$this->$methToExec($eventName, $listener );
+			$methToExec = 'handleListener' . $postFix;
+
+			$this->$methToExec( $eventName, $listener );
 		}
 
 	}
 
-	private function handleListenerClass( string $eventName, string $listener)
+	private function handleListenerClass( string $eventName, string $listener )
 	{
-		  $listenerPath = EVENT_LISTENERS_DIR . $listener . '.php';
-			
-			$fileInfo = new \SplFileInfo( $listenerPath );
+		$listenerPath = EVENT_LISTENERS_DIR . $listener . '.php';
 
-			if ( $fileInfo->getRealPath() === false )
-			{
-				return;
-			}
+		$fileInfo = new \SplFileInfo( $listenerPath );
 
-			$fullClassName = '\\Shadowapp\\Components\\Eventing\\Listeners\\' . $listener;
-			$reflectionClass = new \ReflectionClass( $fullClassName );
-			$expectedInterface = 'Shadowapp\Sys\Eventing\Interfaces\EventHandlerInterface';
+		if ( $fileInfo->getRealPath() === false )
+		{
+			return;
+		}
 
-			if ( !in_array( $expectedInterface, $reflectionClass->getInterfaceNames() ) )
-			{
-				throw new \Exception( $listener . ' must implement ' . $expectedInterface );
-			}
+		$fullClassName = '\\Shadowapp\\Components\\Eventing\\Listeners\\' . $listener;
+		$reflectionClass = new \ReflectionClass( $fullClassName );
+		$expectedInterface = 'Shadowapp\Sys\Eventing\Interfaces\EventHandlerInterface';
 
-			$methodToExecute = $reflectionClass->getMethod( 'handle' );
+		if ( !in_array( $expectedInterface, $reflectionClass->getInterfaceNames() ) )
+		{
+			throw new \Exception( $listener . ' must implement ' . $expectedInterface );
+		}
 
-			$event = $this->eventQueue[$eventName]['event'];
+		$methodToExecute = $reflectionClass->getMethod( 'handle' );
 
-			$methodToExecute->invoke( new $fullClassName, $event );
+		$event = $this->eventQueue[$eventName]['event'];
+
+		$methodToExecute->invoke( new $fullClassName, $event );
+
 	}
 
-	private function handleListenerCallable(string $eventName, callable $listenerCallable )
+	private function handleListenerCallable( string $eventName, callable $listenerCallable )
 	{
-		var_dump('okkk');		
+		$reflFunc = new \ReflectionFunction( $listenerCallable );
+		$event = $this->eventQueue[$eventName]['event'];
+		$reflFunc->invoke( $event );
+
 	}
-	
-	 
 
 }
