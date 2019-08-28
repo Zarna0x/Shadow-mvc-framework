@@ -1,22 +1,21 @@
 pipeline {
     agent any
     stages {
-        stage('Clone git repo') {
+        stage('Remove old workspace') {
             steps {
-                sh "rm -rf shdw"    
-                sh "git clone -b development https://github.com/Zarna0x/Shadow-mvc-framework shdw"
+                sh "rm -rf *"    
             }
         }
         
         stage('Run Composer') {
             steps {
-                sh "cd shdw && composer install"
+                sh "composer install"
             }
         }
         
         stage('Run unit test') {
             steps {
-                sh "cd shdw && ./vendor/bin/phpunit"
+                sh "./vendor/bin/phpunit"
             }
         }
     }
