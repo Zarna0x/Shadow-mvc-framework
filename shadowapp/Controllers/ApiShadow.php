@@ -22,7 +22,8 @@ class ApiShadow
 
     public function kk()
     { 
-        CommandBus::execute(new CreateNewOrder(3,'asdasd'));
+        var_dump('asd');
+        //CommandBus::execute(new CreateNewOrder(3,'asdasd'));
     }
 
     public function auth($username, $resourceId, $k = 'asd')
